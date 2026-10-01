@@ -1097,7 +1097,20 @@ setInterval(() => {
     }, 500);
 }, 10000);
 
-// Default to Status view on mobile initialization
-if (window.innerWidth <= 768) {
-    switchTab('status');
+// --- DYNAMIC HASH & ROUTE INITIALIZATION ---
+function initActiveTab() {
+    const hash = window.location.hash.replace('#', '').trim();
+    const validTabs = ['status', 'travel', 'personal', 'wallet', 'rewards', 'friends', 'transit', 'support'];
+    
+    if (hash && validTabs.includes(hash)) {
+        switchTab(hash);
+    } else if (window.innerWidth <= 768) {
+        switchTab('status');
+    } else {
+        switchTab('travel');
+    }
 }
+
+window.addEventListener('DOMContentLoaded', initActiveTab);
+window.addEventListener('hashchange', initActiveTab);
+initActiveTab();
