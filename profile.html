@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - RTA</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body class="light-theme">
+
+    <nav class="navbar">
+        <div style="display: flex; align-items: center;">
+            <a href="index.html" class="brand">
+                 <img src="ChatGPT_Image_Jun_7__2026__02_57_26_PM-removebg-preview (1).png" alt="RTA Logo" class="nav-logo">
+                <div class="brand-text">BMRTA<span></span></div>
+            </a>
+            <div class="green-miles-badge" title="Carbon Points System">
+                <i class="fa-solid fa-leaf"></i> <span id="nav-co2">5200</span> Pts
+            </div>
+        </div>
+        <div class="nav-links">
+            <a href="tel:1091" class="nav-safety-btn emergency"><i class="fa-solid fa-phone"></i> Helpline (1091)</a>
+            <a href="#" class="nav-safety-btn report" onclick="alert('Redirecting to Report Portal...')"><i class="fa-solid fa-circle-exclamation"></i> Report Issue</a>
+            
+            <div class="nav-divider"></div>
+            
+            <a href="index.html">Live Dashboard</a>
+            <a onclick="openSettings()">Settings</a>
+            <button id="theme-toggle" class="btn-theme-toggle"><i class="fa-solid fa-moon"></i></button>
+            <a href="index.html" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </nav>
+
+    <div class="profile-wrapper">
+        
+        <aside class="left-col">
+            <div class="glass-panel profile-container">
+                <div id="main-profile-banner" class="profile-banner default-banner"></div>
+                
+                <div class="user-content-wrapper">
+                    <div class="avatar-ring" id="avatar-ring">
+                        <div class="avatar-inner" id="main-avatar-inner">VV</div>
+                    </div>
+                    
+                    <div class="user-name">Vignesh Vicky</div>
+                    <div class="user-username">@vignesh_v</div>
+                    
+                    <div class="status-indicator" onclick="toggleMoonMode()" title="Click to toggle Moon Mode">
+                        <div id="user-status-dot" class="status-dot"></div>
+                        <span id="user-status-text">Live: On Purple Line</span>
+                        <span id="moon-mode-icon" style="font-size: 14px; margin-left: 2px;">🌕</span>
+                    </div>
+
+                    <div class="user-bio" id="main-user-bio">"Eco-warrior & daily commuter. Let's save the planet one trip at a time!"</div>
+                    
+                    <div id="main-user-tag" class="user-tag tag-commuter" data-tooltip="This tag is provided based on the user's travel activity.">
+                        <i class="fa-solid fa-train-subway"></i> Daily Commuter
+                    </div>
+                    
+                    <div class="badges-row">
+                        <div class="mini-badge" data-tooltip="Early Bird (Commuted before 7 AM)" style="color: #f59e0b; border-color: #fcd34d;"><i class="fa-solid fa-sun"></i></div>
+                        <div class="mini-badge" data-tooltip="Centurion (100 total trips)" style="color: #3b82f6; border-color: #93c5fd;"><i class="fa-solid fa-crown"></i></div>
+                        <div class="mini-badge" data-tooltip="Bus Boss (Took 10 BMTC rides)" style="color: #ef4444; border-color: #fca5a5;"><i class="fa-solid fa-bus"></i></div>
+                    </div>
+                </div>
+
+                <div class="nav-btn-group">
+                    <button class="profile-btn active" onclick="switchTab('travel', this)">
+                        <div style="display:flex; align-items:center;"><i class="fa-solid fa-route left-icon" style="color: #22c55e;"></i> Travel History</div>
+                        <i class="fa-solid fa-chevron-right right-icon"></i>
+                    </button>
+                    <button class="profile-btn" onclick="switchTab('personal', this)">
+                        <div style="display:flex; align-items:center;"><i class="fa-regular fa-id-card left-icon" style="color: #007bff;"></i> Personal Information</div>
+                        <i class="fa-solid fa-chevron-right right-icon"></i>
+                    </button>
+                    <button class="profile-btn" onclick="switchTab('wallet', this)">
+                        <div style="display:flex; align-items:center;"><i class="fa-solid fa-wallet left-icon" style="color: #f59e0b;"></i> Smart Wallet & Passes</div>
+                        <i class="fa-solid fa-chevron-right right-icon"></i>
+                    </button>
+                    <button class="profile-btn" onclick="switchTab('rewards', this)">
+                        <div style="display:flex; align-items:center;"><i class="fa-solid fa-trophy left-icon" style="color: #06b6d4;"></i> Activity & Rewards</div>
+                        <i class="fa-solid fa-chevron-right right-icon"></i>
+                    </button>
+                    <button class="profile-btn" onclick="switchTab('friends', this)">
+                        <div style="display:flex; align-items:center;"><i class="fa-solid fa-user-group left-icon" style="color: #ec4899;"></i> Friends</div>
+                        <i class="fa-solid fa-chevron-right right-icon"></i>
+                    </button>
+                    <button class="profile-btn" onclick="switchTab('transit', this)">
+                        <div style="display:flex; align-items:center;"><i class="fa-solid fa-train-tram left-icon" style="color: #f43f5e;"></i> Transit Details</div>
+                        <i class="fa-solid fa-chevron-right right-icon"></i>
+                    </button>
+                    <button class="profile-btn" onclick="switchTab('support', this)">
+                        <div style="display:flex; align-items:center;"><i class="fa-solid fa-headset left-icon" style="color: #8b5cf6;"></i> Support & Feedback</div>
+                        <i class="fa-solid fa-chevron-right right-icon"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <main class="center-col">
+            
+            <div class="top-stats-row">
+                <div class="top-stat-card c-green">
+                    <div style="font-size: 22px; font-weight: 800; display:flex; flex-direction:column; align-items:center; gap: 2px;">
+                        <i class="fa-solid fa-cloud-arrow-down stat-icon"></i> 
+                        <span id="profile-co2">52.0 kg</span>
+                    </div>
+                    <div class="top-stat-label">CO₂ Emissions Saved</div>
+                </div>
+                
+                <div class="top-stat-card c-orange">
+                    <div style="font-size: 22px; font-weight: 800; display:flex; flex-direction:column; align-items:center; gap: 2px;">
+                        <i class="fa-solid fa-piggy-bank stat-icon"></i>
+                        <span id="profile-money-saved">₹3,450</span>
+                    </div>
+                    <div class="top-stat-label">Saved vs Driving</div>
+                </div>
+
+                <div class="top-stat-card c-blue">
+                    <div style="font-size: 22px; font-weight: 800; display:flex; flex-direction:column; align-items:center; gap: 2px;">
+                        <i class="fa-solid fa-coins stat-icon"></i> 
+                        <span id="profile-travel-pts">0 Pts</span>
+                    </div>
+                    <div class="top-stat-label">Travel Points</div>
+                </div>
+            </div>
+
+            <div class="dynamic-container">
+                
+                <div id="section-travel" class="glass-panel dynamic-section active">
+                    <h3 style="margin-bottom: 5px;">Travel History</h3>
+                    <div class="calendar-container">
+                        <div class="calendar-header">
+                            <button class="calendar-nav" onclick="changeMonth(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                            <span id="calendar-month-year" style="font-weight: 600; font-family: 'Montserrat';">June 2026</span>
+                            <button class="calendar-nav" onclick="changeMonth(1)"><i class="fa-solid fa-chevron-right"></i></button>
+                        </div>
+                        <div class="calendar-grid" id="calendar-grid"></div>
+                    </div>
+                    <div class="travel-details-box" id="travel-details-box">
+                        <div style="text-align: center; color: #94a3b8;"><i class="fa-solid fa-hand-pointer" style="font-size: 24px; margin-bottom: 10px;"></i><br>Click a date to view travel details.</div>
+                    </div>
+                </div>
+
+                <div id="section-personal" class="glass-panel dynamic-section">
+                    <h3>Personal Information</h3>
+                    <div class="info-grid">
+                        <div class="info-item"><label>First Name</label><div>Vignesh</div></div>
+                        <div class="info-item"><label>Last Name</label><div>Vicky</div></div>
+                        <div class="info-item"><label>Mobile No</label><div>+91 98765 43210</div></div>
+                        <div class="info-item"><label>Email</label><div>vignesh.v@gmail.com</div></div>
+                        <div class="info-item"><label>Date of Birth</label><div>14 Aug 1995</div></div>
+                        <div class="info-item"><label>Account Created</label><div>12 Jan 2025</div></div>
+                        <div class="info-item"><label>Linked Card</label><div>**** **** **** 4592</div></div>
+                        <div class="info-item"><label>UPI Details</label><div>vignesh@okhdfcbank</div></div>
+                    </div>
+                    <button class="btn-logout" style="margin: 15px 0 0 0; width: fit-content; border: 1px solid #64748b; color: inherit !important; background: transparent;"><i class="fa-solid fa-shield-halved"></i> Privacy Policy</button>
+                </div>
+
+                <div id="section-wallet" class="glass-panel dynamic-section">
+                    <h3>Smart Wallet & Passes</h3>
+                    <div class="wallet-card">
+                        <div style="font-size: 13px; opacity: 0.8; text-transform: uppercase;">Available Balance</div>
+                        <div class="wallet-amount" id="display-wallet-balance">₹ 245.50</div>
+                        <div style="display: flex; gap: 10px; margin-top: 15px;">
+                            <div style="background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 6px; font-size: 12px;"><i class="fa-solid fa-check-circle" style="color:#4ade80;"></i> Active Daily Pass</div>
+                        </div>
+                    </div>
+
+                    <h4 style="font-size: 14px; margin: 15px 0 10px 0; font-family:'Inter'; font-weight:600; color:#94a3b8;"><i class="fa-regular fa-credit-card"></i> Linked Cards</h4>
+                    <div class="ncmc-card-visual">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <b style="font-size:14px; font-family:'Montserrat';">RuPay NCMC</b>
+                            <i class="fa-brands fa-cc-discover" style="font-size:24px;"></i>
+                        </div>
+                        <div style="font-family:monospace; font-size:16px; margin:12px 0; letter-spacing: 2px;">**** **** 4592</div>
+                        <div style="font-size:11px; display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-weight:600;">VIGNESH VICKY</span>
+                            <span style="color:#86efac; background:rgba(255,255,255,0.1); padding:3px 8px; border-radius:12px;"><i class="fa-solid fa-circle-check"></i> Active</span>
+                        </div>
+                    </div>
+
+                    <h4 style="font-size: 14px; margin-bottom: 10px; font-family:'Inter'; font-weight:600; color:#94a3b8;"><i class="fa-solid fa-plus-circle"></i> Top Up Wallet</h4>
+                    <div class="topup-form">
+                        <input type="number" id="topup-amount" placeholder="Enter Amount (₹)" min="10">
+                        <button class="topup-btn" onclick="addFunds()"><i class="fa-solid fa-plus"></i> Add Funds</button>
+                    </div>
+                </div>
+
+                <div id="section-rewards" class="glass-panel dynamic-section">
+                    <h3>Activity & Rewards</h3>
+                    
+                    <div class="reward-tracker" id="reward-tracker-ui"></div>
+
+                    <div class="level-card" style="margin-bottom: 10px;">
+                        <div style="font-size: 18px; font-family: 'Montserrat'; font-weight: 800;">Current: LEVEL <span id="reward-level">1</span></div>
+                        <div class="text-sm" style="margin-top: 5px;" id="reward-status">Travel 1 more time to reach Level 2!</div>
+                        
+                        <button class="sim-travel-btn" onclick="simulateTravel()"><i class="fa-solid fa-ticket"></i> Buy Ticket & Travel</button>
+                        
+                        <div class="btn-row">
+                            <button class="history-btn" onclick="openHistoryModal()"><i class="fa-solid fa-clock-rotate-left"></i> Reward History</button>
+                            <button class="reset-btn" onclick="resetRewardsTesting()"><i class="fa-solid fa-trash-can"></i> Reset</button>
+                        </div>
+                    </div>
+
+                    <h4 style="font-size: 15px; margin: 5px 0 5px 0;"><i class="fa-solid fa-bullseye" style="color: #ec4899;"></i> Active Quests</h4>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <div class="inner-card" style="flex: 1; min-width: 200px; padding: 12px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 5px;">
+                                <div style="font-weight: 600; font-size: 14px;">Weekend Warrior</div>
+                                <span style="font-size: 12px; font-weight:bold; color: #ec4899;">1/2</span>
+                            </div>
+                            <div class="text-sm" style="margin-bottom: 8px; line-height: 1.4;">Take 2 rides this weekend. <br><span style="color:#f59e0b; font-weight: 600;">🎁 50 Pts</span></div>
+                            <div style="width: 100%; height: 6px; background: rgba(0,0,0,0.1); border-radius: 3px; overflow: hidden;">
+                                <div style="width: 50%; height: 100%; background: #ec4899;"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="inner-card" style="flex: 1; min-width: 200px; padding: 12px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 5px;">
+                                <div style="font-weight: 600; font-size: 14px;">Rain Rider</div>
+                                <span style="font-size: 12px; font-weight:bold; color: #3b82f6;">0/1</span>
+                            </div>
+                            <div class="text-sm" style="margin-bottom: 8px; line-height: 1.4;">Travel during a weather alert. <br><span style="color:#f59e0b; font-weight: 600;">🎁 Mystery Card</span></div>
+                            <div style="width: 100%; height: 6px; background: rgba(0,0,0,0.1); border-radius: 3px; overflow: hidden;">
+                                <div style="width: 0%; height: 100%; background: #3b82f6;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 style="font-size: 15px; margin: 10px 0 5px 0;"><i class="fa-solid fa-tags" style="color: #0ea5e9;"></i> Eco-Partner Offers</h4>
+                    <div style="display: flex; gap: 10px;">
+                        <div class="inner-card" style="flex:1; text-align: center; cursor: pointer; padding: 15px 10px;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+                            <i class="fa-solid fa-mug-hot" style="font-size:24px; color:#d97706; margin-bottom:8px;"></i>
+                            <div style="font-size:13px; font-weight:700;">15% Off Coffee</div>
+                            <div style="font-size:11px; color:#3b82f6; margin-top:4px; font-weight: bold;">500 Pts</div>
+                        </div>
+                        <div class="inner-card" style="flex:1; text-align: center; cursor: pointer; padding: 15px 10px;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+                            <i class="fa-solid fa-bicycle" style="font-size:24px; color:#22c55e; margin-bottom:8px;"></i>
+                            <div style="font-size:13px; font-weight:700;">Free Yulu Ride</div>
+                            <div style="font-size:11px; color:#3b82f6; margin-top:4px; font-weight: bold;">200 Pts</div>
+                        </div>
+                    </div>
+
+                    <div class="inner-card" style="margin-top: 10px; background: rgba(59, 130, 246, 0.05); border-color: rgba(59, 130, 246, 0.2);">
+                        <h4 style="font-size: 15px; margin-bottom: 10px;"><i class="fa-solid fa-store"></i> Redeem Transit Passes</h4>
+                        <div class="text-sm">Current Points: <b id="redeem-travel-pts" style="color:#3b82f6; font-size:16px;">0</b></div>
+                        
+                        <div style="display:flex; gap:10px; margin-top: 15px; flex-wrap: wrap;">
+                            <button class="topup-btn" style="background:linear-gradient(135deg, #3b82f6, #2563eb); flex:1; min-width: 140px; font-size:14px; font-family:'Montserrat'; font-weight:800; border:1px solid rgba(255,255,255,0.2); box-shadow:0 4px 10px rgba(59,130,246,0.3);" onclick="redeemPass('daily')">DAILY PASS<br><span style="font-size:11px; font-weight:500; font-family:'Inter'; text-transform:none;">(1,000 pts)</span></button>
+                            <button class="topup-btn" style="background:linear-gradient(135deg, #8b5cf6, #7c3aed); flex:1; min-width: 140px; font-size:14px; font-family:'Montserrat'; font-weight:800; border:1px solid rgba(255,255,255,0.2); box-shadow:0 4px 10px rgba(139,92,246,0.3);" onclick="redeemPass('monthly')">MONTHLY PASS<br><span style="font-size:11px; font-weight:500; font-family:'Inter'; text-transform:none;">(10,000 pts)</span></button>
+                        </div>
+                    </div>
+
+                    <div class="inventory-section" id="inventory-section" style="display:block; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 20px; padding-top: 20px;">
+                        <h4 style="font-size: 15px; margin-bottom: 15px;"><i class="fa-solid fa-box-open" style="color: #f59e0b;"></i> My Rewards Inventory</h4>
+                        
+                        <div class="lb-toggle" style="margin-bottom: 15px; display: inline-flex;">
+                            <button class="lb-btn inv-tab-btn active" id="btn-inv-unscratched" onclick="switchInvTab('unscratched')">Unscratched</button>
+                            <button class="lb-btn inv-tab-btn" id="btn-inv-active" onclick="switchInvTab('active')">Active</button>
+                            <button class="lb-btn inv-tab-btn" id="btn-inv-scratched" onclick="switchInvTab('scratched')">Scratched</button>
+                        </div>
+                        
+                        <div class="inventory-grid" id="inventory-grid"></div>
+                    </div>
+                </div>
+
+                <div id="section-friends" class="glass-panel dynamic-section">
+                    <h3>Community & Friends</h3>
+                    
+                    <div class="friends-tab-container">
+                        <button class="friend-tab-btn active" onclick="toggleFriendView('list', this)">My Friends</button>
+                        <button class="friend-tab-btn" onclick="toggleFriendView('add', this)">Add Friends</button>
+                        <button class="friend-tab-btn" onclick="toggleFriendView('requests', this)">Requests <span style="background:#ef4444; color:white; border-radius:50%; padding: 2px 6px; font-size:10px; margin-left:4px;" id="req-count">2</span></button>
+                    </div>
+
+                    <div id="friend-list-view"></div>
+
+                    <div id="friend-add-view" style="display: none;">
+                        <div class="search-container">
+                            <input type="text" id="friend-search-input" placeholder="Search by name or @username...">
+                            <button class="topup-btn" onclick="searchFriends()"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+                        </div>
+                        <div id="search-results-view">
+                            <div class="text-sm" style="text-align: center; padding: 20px;">Search for commuters to see their profiles.</div>
+                        </div>
+                    </div>
+
+                    <div id="friend-requests-view" style="display: none;"></div>
+                </div>
+
+                <div id="section-transit" class="glass-panel dynamic-section">
+                    <h3>Transit Details</h3>
+                    
+                    <!-- 1. Namma Metro Comprehensive Map -->
+                    <div class="inner-card" style="margin-bottom: 20px;">
+                        <h4 style="font-size: 15px; margin-bottom: 5px;"><i class="fa-solid fa-map-location-dot" style="color: #3b82f6;"></i> Network Map</h4>
+                        <p class="text-sm" style="margin-bottom: 15px;">Visual route data and high-resolution transit maps will go here.</p>
+                        <div class="map-preview-container">
+                            <img src="Metro_Map_2025_-_Bengaluru_City_page-0001.jpg" alt="Bengaluru Metro Map 2025" onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'text-align:center;color:#94a3b8;\'><i class=\'fa-regular fa-image\' style=\'font-size:32px;margin-bottom:10px;\'></i><div>[ Add Metro Map Image Here ]</div></div>';">
+                        </div>
+                        <div class="map-details-card">
+                            <div class="map-logo-square">
+                                <img src="namma-metro-logo.png" alt="Metro Logo" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-regular fa-image\'></i>';">
+                            </div>
+                            <div>
+                                <h5 style="font-size: 14px; margin-bottom: 4px; color: #8b5cf6;">Namma Metro Comprehensive Map</h5>
+                                <p class="text-sm" style="margin: 0; line-height: 1.4;">Details regarding operational lines, upcoming station expansions, and timings.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Suburban Train Map (K-RIDE) -->
+                    <div class="inner-card" style="margin-bottom: 20px;">
+                        <h4 style="font-size: 15px; margin-bottom: 5px;"><i class="fa-solid fa-map-location-dot" style="color: #3b82f6;"></i> Network Map</h4>
+                        <p class="text-sm" style="margin-bottom: 15px;">Visual route data and high-resolution transit maps will go here.</p>
+                        <div class="map-preview-container">
+                            <img src="kride-suburban-map.jpg" alt="Suburban Train Map (K-RIDE)" onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'text-align:center;color:#94a3b8;\'><i class=\'fa-regular fa-image\' style=\'font-size:32px;margin-bottom:10px;\'></i><div>[ Add Suburban Train Image Here ]</div></div>';">
+                        </div>
+                        <div class="map-details-card">
+                            <div class="map-logo-square">
+                                <img src="kride-logo.png" alt="K-RIDE Logo" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-regular fa-image\'></i>';">
+                            </div>
+                            <div>
+                                <h5 style="font-size: 14px; margin-bottom: 4px; color: #16a34a;">Suburban Train Map (K-RIDE)</h5>
+                                <p class="text-sm" style="margin: 0; line-height: 1.4;">General information regarding routes, stations, and operational timings.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. BMTC Network -->
+                    <div class="inner-card" style="margin-bottom: 20px;">
+                        <h4 style="font-size: 15px; margin-bottom: 5px;"><i class="fa-solid fa-map-location-dot" style="color: #3b82f6;"></i> Network Map</h4>
+                        <p class="text-sm" style="margin-bottom: 15px;">Visual route data and high-resolution transit maps will go here.</p>
+                        <div class="map-preview-container">
+                            <img src="bmtc-network-map.jpg" alt="BMTC Network" onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'text-align:center;color:#94a3b8;\'><i class=\'fa-regular fa-image\' style=\'font-size:32px;margin-bottom:10px;\'></i><div>[ Add BMTC Map Image Here ]</div></div>';">
+                        </div>
+                        <div class="map-details-card">
+                            <div class="map-logo-square">
+                                <img src="bmtc-logo.png" alt="BMTC Logo" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-regular fa-image\'></i>';">
+                            </div>
+                            <div>
+                                <h5 style="font-size: 14px; margin-bottom: 4px; color: #0ea5e9;">BMTC Network</h5>
+                                <p class="text-sm" style="margin: 0; line-height: 1.4;">Information regarding Vajra AC routes, feeder buses, and major transit hubs.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Purple Line Map -->
+                    <div class="inner-card" style="margin-bottom: 20px;">
+                        <h4 style="font-size: 15px; margin-bottom: 5px;"><i class="fa-solid fa-map-location-dot" style="color: #3b82f6;"></i> Network Map</h4>
+                        <p class="text-sm" style="margin-bottom: 15px;">Visual route data and high-resolution transit maps will go here.</p>
+                        <div class="map-preview-container">
+                            <img src="purple-line-map.jpg" alt="Purple Line Map" onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'text-align:center;color:#94a3b8;\'><i class=\'fa-regular fa-image\' style=\'font-size:32px;margin-bottom:10px;\'></i><div>[ Add Purple Line Image Here ]</div></div>';">
+                        </div>
+                        <div class="map-details-card">
+                            <div class="map-logo-square">
+                                <img src="purple-line-badge.png" alt="Purple Line Badge" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-regular fa-image\'></i>';">
+                            </div>
+                            <div>
+                                <h5 style="font-size: 14px; margin-bottom: 4px; color: #a855f7;">Purple Line Map</h5>
+                                <p class="text-sm" style="margin: 0; line-height: 1.4;">General information regarding routes, stations, and operational timings.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. Green Line Map -->
+                    <div class="inner-card" style="margin-bottom: 20px;">
+                        <h4 style="font-size: 15px; margin-bottom: 5px;"><i class="fa-solid fa-map-location-dot" style="color: #3b82f6;"></i> Network Map</h4>
+                        <p class="text-sm" style="margin-bottom: 15px;">Visual route data and high-resolution transit maps will go here.</p>
+                        <div class="map-preview-container">
+                            <img src="green-line-map.jpg" alt="Green Line Map" onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'text-align:center;color:#94a3b8;\'><i class=\'fa-regular fa-image\' style=\'font-size:32px;margin-bottom:10px;\'></i><div>[ Add Green Line Image Here ]</div></div>';">
+                        </div>
+                        <div class="map-details-card">
+                            <div class="map-logo-square">
+                                <img src="green-line-badge.png" alt="Green Line Badge" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-regular fa-image\'></i>';">
+                            </div>
+                            <div>
+                                <h5 style="font-size: 14px; margin-bottom: 4px; color: #22c55e;">Green Line Map</h5>
+                                <p class="text-sm" style="margin: 0; line-height: 1.4;">General information regarding routes, stations, and operational timings.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. Yellow Line Map -->
+                    <div class="inner-card" style="margin-bottom: 20px;">
+                        <h4 style="font-size: 15px; margin-bottom: 5px;"><i class="fa-solid fa-map-location-dot" style="color: #3b82f6;"></i> Network Map</h4>
+                        <p class="text-sm" style="margin-bottom: 15px;">Visual route data and high-resolution transit maps will go here.</p>
+                        <div class="map-preview-container">
+                            <img src="yellow-line-map.jpg" alt="Yellow Line Map" onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'text-align:center;color:#94a3b8;\'><i class=\'fa-regular fa-image\' style=\'font-size:32px;margin-bottom:10px;\'></i><div>[ Add Yellow Line Image Here ]</div></div>';">
+                        </div>
+                        <div class="map-details-card">
+                            <div class="map-logo-square">
+                                <img src="yellow-line-badge.png" alt="Yellow Line Badge" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-regular fa-image\'></i>';">
+                            </div>
+                            <div>
+                                <h5 style="font-size: 14px; margin-bottom: 4px; color: #eab308;">Yellow Line Map</h5>
+                                <p class="text-sm" style="margin: 0; line-height: 1.4;">General information regarding routes, stations, and operational timings.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 7. Pink Line Map -->
+                    <div class="inner-card" style="margin-bottom: 20px;">
+                        <h4 style="font-size: 15px; margin-bottom: 5px;"><i class="fa-solid fa-map-location-dot" style="color: #3b82f6;"></i> Network Map</h4>
+                        <p class="text-sm" style="margin-bottom: 15px;">Visual route data and high-resolution transit maps will go here.</p>
+                        <div class="map-preview-container">
+                            <img src="pink-line-map.jpg" alt="Pink Line Map" onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'text-align:center;color:#94a3b8;\'><i class=\'fa-regular fa-image\' style=\'font-size:32px;margin-bottom:10px;\'></i><div>[ Add Pink Line Image Here ]</div></div>';">
+                        </div>
+                        <div class="map-details-card">
+                            <div class="map-logo-square">
+                                <img src="pink-line-badge.png" alt="Pink Line Badge" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-regular fa-image\'></i>';">
+                            </div>
+                            <div>
+                                <h5 style="font-size: 14px; margin-bottom: 4px; color: #ec4899;">Pink Line Map</h5>
+                                <p class="text-sm" style="margin: 0; line-height: 1.4;">General information regarding routes, stations, and operational timings.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 8. Blue Line Map -->
+                    <div class="inner-card" style="margin-bottom: 20px;">
+                        <h4 style="font-size: 15px; margin-bottom: 5px;"><i class="fa-solid fa-map-location-dot" style="color: #3b82f6;"></i> Network Map</h4>
+                        <p class="text-sm" style="margin-bottom: 15px;">Visual route data and high-resolution transit maps will go here.</p>
+                        <div class="map-preview-container">
+                            <img src="blue-line-map.jpg" alt="Blue Line Map" onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'text-align:center;color:#94a3b8;\'><i class=\'fa-regular fa-image\' style=\'font-size:32px;margin-bottom:10px;\'></i><div>[ Add Blue Line Image Here ]</div></div>';">
+                        </div>
+                        <div class="map-details-card">
+                            <div class="map-logo-square">
+                                <img src="blue-line-badge.png" alt="Blue Line Badge" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-regular fa-image\'></i>';">
+                            </div>
+                            <div>
+                                <h5 style="font-size: 14px; margin-bottom: 4px; color: #3b82f6;">Blue Line Map</h5>
+                                <p class="text-sm" style="margin: 0; line-height: 1.4;">General information regarding routes, stations, and operational timings.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 9. Orange Line Map -->
+                    <div class="inner-card" style="margin-bottom: 20px;">
+                        <h4 style="font-size: 15px; margin-bottom: 5px;"><i class="fa-solid fa-map-location-dot" style="color: #3b82f6;"></i> Network Map</h4>
+                        <p class="text-sm" style="margin-bottom: 15px;">Visual route data and high-resolution transit maps will go here.</p>
+                        <div class="map-preview-container">
+                            <img src="orange-line-map.jpg" alt="Orange Line Map" onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'text-align:center;color:#94a3b8;\'><i class=\'fa-regular fa-image\' style=\'font-size:32px;margin-bottom:10px;\'></i><div>[ Add Orange Line Image Here ]</div></div>';">
+                        </div>
+                        <div class="map-details-card">
+                            <div class="map-logo-square">
+                                <img src="orange-line-badge.png" alt="Orange Line Badge" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-regular fa-image\'></i>';">
+                            </div>
+                            <div>
+                                <h5 style="font-size: 14px; margin-bottom: 4px; color: #f97316;">Orange Line Map</h5>
+                                <p class="text-sm" style="margin: 0; line-height: 1.4;">General information regarding routes, stations, and operational timings.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 10. Grey Line Map -->
+                    <div class="inner-card" style="margin-bottom: 20px;">
+                        <h4 style="font-size: 15px; margin-bottom: 5px;"><i class="fa-solid fa-map-location-dot" style="color: #3b82f6;"></i> Network Map</h4>
+                        <p class="text-sm" style="margin-bottom: 15px;">Visual route data and high-resolution transit maps will go here.</p>
+                        <div class="map-preview-container">
+                            <img src="grey-line-map.jpg" alt="Grey Line Map" onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'text-align:center;color:#94a3b8;\'><i class=\'fa-regular fa-image\' style=\'font-size:32px;margin-bottom:10px;\'></i><div>[ Add Grey Line Image Here ]</div></div>';">
+                        </div>
+                        <div class="map-details-card">
+                            <div class="map-logo-square">
+                                <img src="grey-line-badge.png" alt="Grey Line Badge" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-regular fa-image\'></i>';">
+                            </div>
+                            <div>
+                                <h5 style="font-size: 14px; margin-bottom: 4px; color: #94a3b8;">Grey Line Map</h5>
+                                <p class="text-sm" style="margin: 0; line-height: 1.4;">General information regarding routes, stations, and operational timings.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 11. Suburban Train: Doddaballapura - SMVT Bengaluru (Brown) -->
+                    <div class="inner-card" style="margin-bottom: 20px;">
+                        <h4 style="font-size: 15px; margin-bottom: 5px;"><i class="fa-solid fa-map-location-dot" style="color: #3b82f6;"></i> Network Map</h4>
+                        <p class="text-sm" style="margin-bottom: 15px;">Visual route data and high-resolution transit maps will go here.</p>
+                        <div class="map-preview-container">
+                            <img src="suburban-brown-line-map.jpg" alt="Suburban Train Brown Line" onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'text-align:center;color:#94a3b8;\'><i class=\'fa-regular fa-image\' style=\'font-size:32px;margin-bottom:10px;\'></i><div>[ Add Suburban Brown Line Image Here ]</div></div>';">
+                        </div>
+                        <div class="map-details-card">
+                            <div class="map-logo-square">
+                                <img src="suburban-brown-badge.png" alt="Suburban Brown Badge" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-regular fa-image\'></i>';">
+                            </div>
+                            <div>
+                                <h5 style="font-size: 14px; margin-bottom: 4px; color: #78350f;">Suburban Train: Doddaballapura - SMVT Bengaluru (Brown)</h5>
+                                <p class="text-sm" style="margin: 0; line-height: 1.4;">General information regarding routes, stations, and operational timings.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 12. Suburban Train: KSR Bengaluru - Chikkaballapura (Red) -->
+                    <div class="inner-card" style="margin-bottom: 20px;">
+                        <h4 style="font-size: 15px; margin-bottom: 5px;"><i class="fa-solid fa-map-location-dot" style="color: #3b82f6;"></i> Network Map</h4>
+                        <p class="text-sm" style="margin-bottom: 15px;">Visual route data and high-resolution transit maps will go here.</p>
+                        <div class="map-preview-container">
+                            <img src="suburban-red-line-map.jpg" alt="Suburban Train Red Line" onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'text-align:center;color:#94a3b8;\'><i class=\'fa-regular fa-image\' style=\'font-size:32px;margin-bottom:10px;\'></i><div>[ Add Suburban Red Line Image Here ]</div></div>';">
+                        </div>
+                        <div class="map-details-card">
+                            <div class="map-logo-square">
+                                <img src="suburban-red-badge.png" alt="Suburban Red Badge" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-regular fa-image\'></i>';">
+                            </div>
+                            <div>
+                                <h5 style="font-size: 14px; margin-bottom: 4px; color: #ef4444;">Suburban Train: KSR Bengaluru - Chikkaballapura (Red)</h5>
+                                <p class="text-sm" style="margin: 0; line-height: 1.4;">General information regarding routes, stations, and operational timings.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 13. Suburban Train: Chikkaballapura - Kuppam (Grey) -->
+                    <div class="inner-card" style="margin-bottom: 20px;">
+                        <h4 style="font-size: 15px; margin-bottom: 5px;"><i class="fa-solid fa-map-location-dot" style="color: #3b82f6;"></i> Network Map</h4>
+                        <p class="text-sm" style="margin-bottom: 15px;">Visual route data and high-resolution transit maps will go here.</p>
+                        <div class="map-preview-container">
+                            <img src="suburban-grey-line-map.jpg" alt="Suburban Train Grey Line" onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'text-align:center;color:#94a3b8;\'><i class=\'fa-regular fa-image\' style=\'font-size:32px;margin-bottom:10px;\'></i><div>[ Add Suburban Grey Line Image Here ]</div></div>';">
+                        </div>
+                        <div class="map-details-card">
+                            <div class="map-logo-square">
+                                <img src="suburban-grey-badge.png" alt="Suburban Grey Badge" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-regular fa-image\'></i>';">
+                            </div>
+                            <div>
+                                <h5 style="font-size: 14px; margin-bottom: 4px; color: #94a3b8;">Suburban Train: Chikkaballapura - Kuppam (Grey)</h5>
+                                <p class="text-sm" style="margin: 0; line-height: 1.4;">General information regarding routes, stations, and operational timings.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 14. Suburban Train: Hosur - Tumkur (Orange) -->
+                    <div class="inner-card" style="margin-bottom: 20px;">
+                        <h4 style="font-size: 15px; margin-bottom: 5px;"><i class="fa-solid fa-map-location-dot" style="color: #3b82f6;"></i> Network Map</h4>
+                        <p class="text-sm" style="margin-bottom: 15px;">Visual route data and high-resolution transit maps will go here.</p>
+                        <div class="map-preview-container">
+                            <img src="suburban-orange-line-map.jpg" alt="Suburban Train Orange Line" onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'text-align:center;color:#94a3b8;\'><i class=\'fa-regular fa-image\' style=\'font-size:32px;margin-bottom:10px;\'></i><div>[ Add Suburban Orange Line Image Here ]</div></div>';">
+                        </div>
+                        <div class="map-details-card">
+                            <div class="map-logo-square">
+                                <img src="suburban-orange-badge.png" alt="Suburban Orange Badge" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-regular fa-image\'></i>';">
+                            </div>
+                            <div>
+                                <h5 style="font-size: 14px; margin-bottom: 4px; color: #f97316;">Suburban Train: Hosur - Tumkur (Orange)</h5>
+                                <p class="text-sm" style="margin: 0; line-height: 1.4;">General information regarding routes, stations, and operational timings.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 15. Suburban Train: Ashokapuram - Bangarapet (Blue) -->
+                    <div class="inner-card" style="margin-bottom: 20px;">
+                        <h4 style="font-size: 15px; margin-bottom: 5px;"><i class="fa-solid fa-map-location-dot" style="color: #3b82f6;"></i> Network Map</h4>
+                        <p class="text-sm" style="margin-bottom: 15px;">Visual route data and high-resolution transit maps will go here.</p>
+                        <div class="map-preview-container">
+                            <img src="suburban-blue-line-map.jpg" alt="Suburban Train Blue Line" onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'text-align:center;color:#94a3b8;\'><i class=\'fa-regular fa-image\' style=\'font-size:32px;margin-bottom:10px;\'></i><div>[ Add Suburban Blue Line Image Here ]</div></div>';">
+                        </div>
+                        <div class="map-details-card">
+                            <div class="map-logo-square">
+                                <img src="suburban-blue-badge.png" alt="Suburban Blue Badge" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-regular fa-image\'></i>';">
+                            </div>
+                            <div>
+                                <h5 style="font-size: 14px; margin-bottom: 4px; color: #3b82f6;">Suburban Train: Ashokapuram - Bangarapet (Blue)</h5>
+                                <p class="text-sm" style="margin: 0; line-height: 1.4;">General information regarding routes, stations, and operational timings.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="section-support" class="glass-panel dynamic-section">
+                    <h3>Support & Feedback</h3>
+                    <div class="support-form">
+                        <input type="text" placeholder="Subject / Issue Type" id="support-subject">
+                        <textarea placeholder="Describe your issue or feedback in detail..." id="support-message"></textarea>
+                        <button class="topup-btn" style="width: 100%;" onclick="submitFeedback()"><i class="fa-solid fa-paper-plane"></i> Submit Feedback</button>
+                    </div>
+                    
+                    <div class="inner-card" style="margin-top: 15px; border-color: rgba(239, 68, 68, 0.2);">
+                        <h4 style="font-size: 15px; margin-bottom: 15px; color:#94a3b8; display:flex; align-items:center; gap:8px;">
+                            <i class="fa-solid fa-shield-halved" style="color: #64748b;"></i> Safety Center
+                        </h4>
+                        <div style="display:flex; flex-direction:column; gap:10px;">
+                            <a href="tel:1091" class="sos-btn emergency"><i class="fa-solid fa-phone" style="margin-right:8px;"></i> Women's Helpline (1091)</a>
+                            <a href="#" class="sos-btn report" onclick="alert('Redirecting...')"><i class="fa-solid fa-circle-exclamation" style="margin-right:8px;"></i> Report Issue / Lost Item</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <footer style="text-align: center; padding: 40px 20px 20px 20px; font-size: 13px; color: #64748b; font-weight: 500; font-family: 'Inter'; letter-spacing: 0.5px;">
+                    Copyright ©2026 BMRTA | Smart Transit Platform Built with Passion and Innovation.
+                </footer>
+
+            </div>
+        </main>
+
+        <aside class="static-col">
+            
+            <div class="glass-panel" style="padding: 20px; position: relative; overflow: hidden;">
+                <h3 style="font-size: 16px; border:none; margin-bottom:10px;"><i class="fa-solid fa-cloud-sun-rain" style="color: #0ea5e9;"></i> Live Advisory</h3>
+                <div id="advisory-container" class="advisory-container"></div>
+                <div class="advisory-progress-track">
+                    <div class="advisory-progress-fill" id="advisory-progress-fill"></div>
+                </div>
+            </div>
+
+            <div class="glass-panel" style="padding: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom:15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                    <h3 style="font-size: 16px; border:none; margin:0;"><i class="fa-solid fa-chart-pie" style="color: #10b981;"></i> My Impact</h3>
+                    <div class="lb-toggle">
+                        <button class="lb-btn impact-tab-btn active" id="btn-tab-env" onclick="switchImpactTab('env')">Env</button>
+                        <button class="lb-btn impact-tab-btn" id="btn-tab-thrifty" onclick="switchImpactTab('thrifty')">Thrifty</button>
+                    </div>
+                </div>
+                
+                <div id="impact-content-env" class="impact-content-panel">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <i class="fa-solid fa-tree" style="font-size: 32px; color: #22c55e;"></i>
+                        <div>
+                            <div style="font-size: 13px; font-family:'Inter'; font-weight: 500; line-height: 1.4;" id="impact-trees-text">
+                                Your transit choices 5200 PTS = 52.0 KG the cooling effect of 5.2 trees. (Minimum)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bar-chart" title="Weekly Carbon Footprint Trend">
+                        <div class="bar" style="height: 40%;"><div class="bar-label">M</div></div>
+                        <div class="bar active" style="height: 85%;"><div class="bar-label">T</div></div>
+                        <div class="bar" style="height: 30%;"><div class="bar-label">W</div></div>
+                        <div class="bar active" style="height: 95%;"><div class="bar-label">T</div></div>
+                        <div class="bar active" style="height: 100%;"><div class="bar-label">F</div></div>
+                        <div class="bar" style="height: 10%;"><div class="bar-label">S</div></div>
+                        <div class="bar" style="height: 0%;"><div class="bar-label">S</div></div>
+                    </div>
+                </div>
+
+                <div id="impact-content-thrifty" class="impact-content-panel" style="display: none;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <i class="fa-solid fa-arrow-trend-up" style="font-size: 32px; color: #f59e0b;"></i>
+                        <div>
+                            <div style="font-size: 20px; font-weight: 800; font-family:'Montserrat'; text-shadow: 0 0 10px rgba(245,158,11,0.2);">₹3,450</div>
+                            <div class="text-sm">Saved vs. Cab Fares.</div>
+                        </div>
+                    </div>
+                    <div class="text-sm inner-card" style="margin-top: 15px; padding: 10px; font-style: italic;">
+                        "That's enough for a nice weekend dinner or a quick getaway!"
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel" style="padding: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom:15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                    <h3 style="font-size: 16px; border:none; margin:0;"><i class="fa-solid fa-ranking-star" style="color: #f59e0b;"></i> Leaderboard</h3>
+                    <div class="lb-toggle">
+                        <button class="lb-btn active" onclick="renderLeaderboard('friends')">Friends</button>
+                        <button class="lb-btn" onclick="renderLeaderboard('all')">All</button>
+                    </div>
+                </div>
+                <div id="leaderboard-list"></div>
+            </div>
+
+            <div class="glass-panel" style="padding: 20px; position: relative; overflow: hidden;">
+                <h3 style="font-size: 16px; border:none; margin:0; margin-bottom:10px;"><i class="fa-solid fa-lightbulb" style="color: #eab308;"></i> Did you know?</h3>
+                <div style="display:flex; gap:12px; align-items:flex-start;">
+                    <i class="fa-solid fa-circle-info" style="color:#3b82f6; margin-top:3px;"></i>
+                    <div id="tip-text-display" class="text-sm fade-transition" style="min-height: 45px;">Loading tips...</div>
+                </div>
+                <div class="tip-progress-track">
+                    <div class="tip-progress-fill" id="tip-progress-fill"></div>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div class="overlay" id="settings-modal">
+        <div class="settings-modal-body">
+            
+            <div class="settings-sidebar">
+                <h3 style="font-size: 18px; padding-left: 20px; color: #3b82f6; border: none; margin-bottom: 10px;"><i class="fa-solid fa-gear"></i> Settings</h3>
+                <button class="settings-tab-btn active" onclick="switchSettingsTab('basic', this)"><i class="fa-solid fa-sliders"></i> Basic</button>
+                <button class="settings-tab-btn" onclick="switchSettingsTab('glory', this)"><i class="fa-solid fa-medal"></i> Glory Title</button>
+                <button class="settings-tab-btn" onclick="switchSettingsTab('image', this)"><i class="fa-solid fa-image-portrait"></i> Profile Image</button>
+                <button class="settings-tab-btn" onclick="switchSettingsTab('banner', this)"><i class="fa-solid fa-panorama"></i> Profile Banner</button>
+                <button class="settings-tab-btn" onclick="switchSettingsTab('card', this)"><i class="fa-regular fa-id-card"></i> Profile Card</button>
+                <button class="settings-tab-btn" onclick="switchSettingsTab('about', this)"><i class="fa-solid fa-circle-info"></i> About BMRTA</button>
+            </div>
+            
+            <div class="settings-content-area">
+                <div class="settings-scroll-area">
+                    
+                    <div class="settings-panel active" id="set-basic">
+                        <h3 style="border:none; margin:0;"><i class="fa-solid fa-sliders" style="color:#3b82f6;"></i> Basic Information</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="form-group"><label>Gender</label><select><option>Male</option><option>Female</option><option>Non-Binary</option><option>Prefer not to say</option></select></div>
+                            <div class="form-group"><label>Language</label><select><option>English</option><option>Kannada</option><option>Hindi</option></select></div>
+                        </div>
+                        <div class="form-group"><label>Your Activity</label><select><option>Daily Commuter</option><option>Weekend Traveler</option><option>Occasional Rider</option></select></div>
+                        <div class="form-group"><label>About (Bio)</label><textarea id="setting-bio-input">"Eco-warrior & daily commuter. Let's save the planet one trip at a time!"</textarea></div>
+                        
+                        <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                            <div>
+                                <div style="font-weight: 600; font-size: 14px;">Ghost Mode (Moon Mode)</div>
+                                <div class="text-sm">Hide your live transit status from the public profile.</div>
+                            </div>
+                            <label class="toggle-switch"><input type="checkbox" id="setting-moon-toggle"><span class="slider"></span></label>
+                        </div>
+                    </div>
+
+                    <div class="settings-panel" id="set-glory">
+                        <h3 style="border:none; margin:0;"><i class="fa-solid fa-medal" style="color:#f59e0b;"></i> Select Glory Title</h3>
+                        <div class="text-sm" style="margin-top:-10px; margin-bottom: 10px;">Glory Titles unlock as you level up! (This a Prototype Software so all the glory titles are accessible)</div>
+                        <div class="glory-filter-bar">
+                            <button class="glory-filter-btn active" onclick="renderGloryTags('all', this)">All</button>
+                            <button class="glory-filter-btn" onclick="renderGloryTags('owned', this)">Owned</button>
+                            <button class="glory-filter-btn" onclick="renderGloryTags('locked', this)">Locked</button>
+                        </div>
+                        <div class="glory-grid" id="glory-tags-grid"></div>
+                    </div>
+
+                    <div class="settings-panel" id="set-image">
+                        <h3 style="border:none; margin:0;"><i class="fa-solid fa-image-portrait" style="color:#10b981;"></i> Select Profile Image</h3>
+                        <div class="text-sm" style="margin-top:-10px; margin-bottom: 10px;">Choose a character icon or a stylized initials avatar.</div>
+                        
+                        <h4 style="font-size: 13px; color: #94a3b8; margin-top: 5px;">Animated Avatars (Wave 2 - New)</h4>
+                        <div class="avatar-grid" style="margin-bottom: 15px;">
+                            <div class="avatar-option anim-radar" style="background: rgba(0, 20, 40, 0.8);" onclick="selectImage(this, '<i class=\'fa-solid fa-satellite-dish\' style=\'color:#0ff\'></i>', 'rgba(0, 20, 40, 0.8)', 'anim-radar')"><i class="fa-solid fa-satellite-dish" style="color:#0ff"></i></div>
+                            <div class="avatar-option anim-hologram" style="background: rgba(0,20,40,0.8);" onclick="selectImage(this, '<i class=\'fa-solid fa-microchip\'></i>', 'rgba(0,20,40,0.8)', 'anim-hologram')"><i class="fa-solid fa-microchip"></i></div>
+                            <div class="avatar-option anim-breathing" style="background: linear-gradient(135deg, #10b981, #064e3b);" onclick="selectImage(this, '<i class=\'fa-solid fa-lungs\'></i>', 'linear-gradient(135deg, #10b981, #064e3b)', 'anim-breathing')"><i class="fa-solid fa-lungs"></i></div>
+                            <div class="avatar-option anim-plasma" style="background: linear-gradient(135deg, #ec4899, #8b5cf6);" onclick="selectImage(this, '<i class=\'fa-solid fa-droplet\'></i>', 'linear-gradient(135deg, #ec4899, #8b5cf6)', 'anim-plasma')"><i class="fa-solid fa-droplet"></i></div>
+                            <div class="avatar-option anim-neon-pulse" style="background: #0f172a;" onclick="selectImage(this, '<i class=\'fa-solid fa-bolt\' style=\'color:#f0f\'></i>', '#0f172a', 'anim-neon-pulse')"><i class="fa-solid fa-bolt" style="color:#f0f"></i></div>
+                        </div>
+
+                        <h4 style="font-size: 13px; color: #94a3b8; margin-top: 5px;">Animated Avatars (Wave 1)</h4>
+                        <div class="avatar-grid" style="margin-bottom: 15px;">
+                            <div class="avatar-option anim-float" style="background: linear-gradient(135deg, #0ea5e9, #3b82f6);" onclick="selectImage(this, '<i class=\'fa-solid fa-rocket\'></i>', 'linear-gradient(135deg, #0ea5e9, #3b82f6)', 'anim-float')"><i class="fa-solid fa-rocket"></i></div>
+                            <div class="avatar-option anim-pulse-glow" style="background: linear-gradient(135deg, #f59e0b, #ef4444);" onclick="selectImage(this, '<i class=\'fa-solid fa-fire-flame-curved\'></i>', 'linear-gradient(135deg, #f59e0b, #ef4444)', 'anim-pulse-glow')"><i class="fa-solid fa-fire-flame-curved"></i></div>
+                            <div class="avatar-option anim-hue-shift" style="background: linear-gradient(135deg, #ec4899, #8b5cf6);" onclick="selectImage(this, '<i class=\'fa-solid fa-gem\'></i>', 'linear-gradient(135deg, #ec4899, #8b5cf6)', 'anim-hue-shift')"><i class="fa-solid fa-gem"></i></div>
+                            <div class="avatar-option anim-wobble" style="background: linear-gradient(135deg, #10b981, #3b82f6);" onclick="selectImage(this, '<i class=\'fa-solid fa-bell\'></i>', 'linear-gradient(135deg, #10b981, #3b82f6)', 'anim-wobble')"><i class="fa-solid fa-bell"></i></div>
+                            <div class="avatar-option anim-flicker" style="background: linear-gradient(135deg, #eab308, #ca8a04);" onclick="selectImage(this, '<i class=\'fa-solid fa-lightbulb\'></i>', 'linear-gradient(135deg, #eab308, #ca8a04)', 'anim-flicker')"><i class="fa-solid fa-lightbulb"></i></div>
+                        </div>
+
+                        <h4 style="font-size: 13px; color: #94a3b8; margin-top: 5px;">Character Icons</h4>
+                        <div class="avatar-grid" style="margin-bottom: 15px;">
+                            <div class="avatar-option" style="background: linear-gradient(135deg, #f59e0b, #d97706);" onclick="selectImage(this, '<i class=\'fa-solid fa-person-walking-luggage\'></i>', 'linear-gradient(135deg, #f59e0b, #d97706)', '')"><i class="fa-solid fa-person-walking-luggage"></i></div>
+                            <div class="avatar-option" style="background: linear-gradient(135deg, #ef4444, #b91c1c);" onclick="selectImage(this, '<i class=\'fa-solid fa-person-dress-baggage\'></i>', 'linear-gradient(135deg, #ef4444, #b91c1c)', '')"><i class="fa-solid fa-person-dress-baggage"></i></div>
+                            <div class="avatar-option" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);" onclick="selectImage(this, '<i class=\'fa-solid fa-user-graduate\'></i>', 'linear-gradient(135deg, #3b82f6, #1d4ed8)', '')"><i class="fa-solid fa-user-graduate"></i></div>
+                            <div class="avatar-option" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);" onclick="selectImage(this, '<i class=\'fa-solid fa-user-tie\'></i>', 'linear-gradient(135deg, #8b5cf6, #6d28d9)', '')"><i class="fa-solid fa-user-tie"></i></div>
+                            <div class="avatar-option" style="background: linear-gradient(135deg, #10b981, #047857);" onclick="selectImage(this, '<i class=\'fa-solid fa-bicycle\'></i>', 'linear-gradient(135deg, #10b981, #047857)', '')"><i class="fa-solid fa-bicycle"></i></div>
+                            <div class="avatar-option" style="background: linear-gradient(135deg, #ec4899, #be185d);" onclick="selectImage(this, '<i class=\'fa-solid fa-user-ninja\'></i>', 'linear-gradient(135deg, #ec4899, #be185d)', '')"><i class="fa-solid fa-user-ninja"></i></div>
+                            <div class="avatar-option" style="background: linear-gradient(135deg, #06b6d4, #0369a1);" onclick="selectImage(this, '<i class=\'fa-solid fa-user-astronaut\'></i>', 'linear-gradient(135deg, #06b6d4, #0369a1)', '')"><i class="fa-solid fa-user-astronaut"></i></div>
+                        </div>
+
+                        <h4 style="font-size: 13px; color: #94a3b8; margin-top: 5px;">Initials & Transit Backgrounds</h4>
+                        <div class="avatar-grid">
+                            <div class="avatar-option selected" style="background: linear-gradient(135deg, #007bff, #06b6d4);" onclick="selectImage(this, '<span class=\'avatar-text\'>VV</span>', 'linear-gradient(135deg, #007bff, #06b6d4)', '')"><span class="avatar-text">VV</span></div>
+                            <div class="avatar-option" style="background: #dc2626;" onclick="selectImage(this, '<i class=\'fa-solid fa-bus avatar-bg-icon\'></i> <span class=\'avatar-text\'>VV</span>', '#dc2626', '')"><i class="fa-solid fa-bus avatar-bg-icon"></i> <span class="avatar-text">VV</span></div>
+                            <div class="avatar-option" style="background: #ea580c;" onclick="selectImage(this, '<i class=\'fa-solid fa-bus avatar-bg-icon\'></i> <span class=\'avatar-text\'>VV</span>', '#ea580c', '')"><i class="fa-solid fa-bus avatar-bg-icon"></i> <span class="avatar-text">VV</span></div>
+                            <div class="avatar-option" style="background: #16a34a;" onclick="selectImage(this, '<i class=\'fa-solid fa-bus avatar-bg-icon\'></i> <span class=\'avatar-text\'>VV</span>', '#16a34a', '')"><i class="fa-solid fa-bus avatar-bg-icon"></i> <span class="avatar-text">VV</span></div>
+                            <div class="avatar-option" style="background: #2563eb;" onclick="selectImage(this, '<i class=\'fa-solid fa-train avatar-bg-icon\'></i> <span class=\'avatar-text\'>VV</span>', '#2563eb', '')"><i class="fa-solid fa-train avatar-bg-icon"></i> <span class="avatar-text">VV</span></div>
+                            <div class="avatar-option" style="background: #7c3aed;" onclick="selectImage(this, '<i class=\'fa-solid fa-train avatar-bg-icon\'></i> <span class=\'avatar-text\'>VV</span>', '#7c3aed', '')"><i class="fa-solid fa-train avatar-bg-icon"></i> <span class="avatar-text">VV</span></div>
+                            <div class="avatar-option" style="background: #db2777;" onclick="selectImage(this, '<i class=\'fa-solid fa-train avatar-bg-icon\'></i> <span class=\'avatar-text\'>VV</span>', '#db2777', '')"><i class="fa-solid fa-train avatar-bg-icon"></i> <span class="avatar-text">VV</span></div>
+                            <div class="avatar-option" style="background: #475569;" onclick="selectImage(this, '<i class=\'fa-solid fa-train-subway avatar-bg-icon\'></i> <span class=\'avatar-text\'>VV</span>', '#475569', '')"><i class="fa-solid fa-train-subway avatar-bg-icon"></i> <span class="avatar-text">VV</span></div>
+                            <div class="avatar-option" style="background: #0f766e;" onclick="selectImage(this, '<i class=\'fa-solid fa-train-subway avatar-bg-icon\'></i> <span class=\'avatar-text\'>VV</span>', '#0f766e', '')"><i class="fa-solid fa-train-subway avatar-bg-icon"></i> <span class="avatar-text">VV</span></div>
+                            <div class="avatar-option" style="background: #b45309;" onclick="selectImage(this, '<i class=\'fa-solid fa-train-subway avatar-bg-icon\'></i> <span class=\'avatar-text\'>VV</span>', '#b45309', '')"><i class="fa-solid fa-train-subway avatar-bg-icon"></i> <span class="avatar-text">VV</span></div>
+                        </div>
+                    </div>
+
+                    <div class="settings-panel" id="set-banner">
+                        <h3 style="border:none; margin:0;"><i class="fa-solid fa-panorama" style="color:#f43f5e;"></i> Select Profile Banner</h3>
+                        <div class="text-sm" style="margin-top:-10px; margin-bottom: 10px;">Customize the background banner behind your profile picture.</div>
+                        
+                        <h4 style="font-size: 13px; color: #94a3b8; margin-top: 5px;">Premium Animated Banners (5)</h4>
+                        <div class="banner-grid" style="margin-bottom: 15px;">
+                            <div class="banner-option banner-inferno" onclick="selectBanner(this, '', 'banner-inferno')"></div>
+                            <div class="banner-option banner-ocean" onclick="selectBanner(this, '', 'banner-ocean')"></div>
+                            <div class="banner-option banner-starlight" onclick="selectBanner(this, '', 'banner-starlight')"></div>
+                            <div class="banner-option banner-prismatic" onclick="selectBanner(this, '', 'banner-prismatic')"></div>
+                            <div class="banner-option banner-glitch" onclick="selectBanner(this, '', 'banner-glitch')"></div>
+                        </div>
+
+                        <h4 style="font-size: 13px; color: #94a3b8; margin-top: 5px;">Classic Banners (15)</h4>
+                        <div class="banner-grid" style="margin-bottom: 15px;">
+                            <div class="banner-option selected" style="background: linear-gradient(135deg, #1e3a8a, #3b82f6);" onclick="selectBanner(this, 'linear-gradient(135deg, #1e3a8a, #3b82f6)', '')"></div>
+                            <div class="banner-option" style="background: linear-gradient(to right, #0f2027, #203a43, #2c5364);" onclick="selectBanner(this, 'linear-gradient(to right, #0f2027, #203a43, #2c5364)', '')"></div>
+                            <div class="banner-option" style="background: linear-gradient(to right, #ff4e50, #f9d423);" onclick="selectBanner(this, 'linear-gradient(to right, #ff4e50, #f9d423)', '')"></div>
+                            <div class="banner-option" style="background: linear-gradient(to right, #134e5e, #71b280);" onclick="selectBanner(this, 'linear-gradient(to right, #134e5e, #71b280)', '')"></div>
+                            <div class="banner-option" style="background: linear-gradient(45deg, #ff00cc, #333399);" onclick="selectBanner(this, 'linear-gradient(45deg, #ff00cc, #333399)', '')"></div>
+                            
+                            <div class="banner-option" style="background: linear-gradient(90deg, #4c1d95, #a855f7);" onclick="selectBanner(this, 'linear-gradient(90deg, #4c1d95, #a855f7)', '')"></div>
+                            <div class="banner-option" style="background: linear-gradient(to right, #000000, #0f9b0f);" onclick="selectBanner(this, 'linear-gradient(to right, #000000, #0f9b0f)', '')"></div>
+                            <div class="banner-option" style="background: linear-gradient(to right, #870000, #190a05);" onclick="selectBanner(this, 'linear-gradient(to right, #870000, #190a05)', '')"></div>
+                            <div class="banner-option" style="background: linear-gradient(to right, #2b5876, #4e4376);" onclick="selectBanner(this, 'linear-gradient(to right, #2b5876, #4e4376)', '')"></div>
+                            <div class="banner-option" style="background: linear-gradient(to right, #4568dc, #b06ab3);" onclick="selectBanner(this, 'linear-gradient(to right, #4568dc, #b06ab3)', '')"></div>
+                            
+                            <div class="banner-option" style="background: linear-gradient(to right, #ff5f6d, #ffc371);" onclick="selectBanner(this, 'linear-gradient(to right, #ff5f6d, #ffc371)', '')"></div>
+                            <div class="banner-option" style="background: repeating-linear-gradient(45deg, #000 0px, #000 10px, #1a2980 10px, #26d0ce 20px);" onclick="selectBanner(this, 'repeating-linear-gradient(45deg, #000 0px, #000 10px, #1a2980 10px, #26d0ce 20px)', '')"></div>
+                            <div class="banner-option" style="background: radial-gradient(circle at top left, #3b82f6, transparent 50%), radial-gradient(circle at bottom right, #10b981, transparent 50%) #0f172a;" onclick="selectBanner(this, 'radial-gradient(circle at top left, #3b82f6, transparent 50%), radial-gradient(circle at bottom right, #10b981, transparent 50%) #0f172a', '')"></div>
+                            <div class="banner-option" style="background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);" onclick="selectBanner(this, 'linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c)', '')"></div>
+                            <div class="banner-option" style="background: linear-gradient(to right, #64748b, #94a3b8);" onclick="selectBanner(this, 'linear-gradient(to right, #64748b, #94a3b8)', '')"></div>
+                        </div>
+
+                        <h4 style="font-size: 13px; color: #94a3b8; margin-top: 5px;">Modern Geometric (5)</h4>
+                        <div class="banner-grid" style="margin-bottom: 15px;">
+                            <div class="banner-option banner-synthwave" onclick="selectBanner(this, '', 'banner-synthwave')"></div>
+                            <div class="banner-option banner-aurora" onclick="selectBanner(this, '', 'banner-aurora')"></div>
+                            <div class="banner-option banner-trails" onclick="selectBanner(this, '', 'banner-trails')"></div>
+                            <div class="banner-option banner-nebula" onclick="selectBanner(this, '', 'banner-nebula')"></div>
+                            <div class="banner-option banner-matrix" onclick="selectBanner(this, '', 'banner-matrix')"></div>
+                        </div>
+
+                        <h4 style="font-size: 13px; color: #94a3b8; margin-top: 5px;">Exclusive Editions (5)</h4>
+                        <div class="banner-grid">
+                            <div class="banner-option" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);" onclick="selectBanner(this, 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%)', '')"></div>
+                            <div class="banner-option" style="background: linear-gradient(to right, #434343 0%, black 100%);" onclick="selectBanner(this, 'linear-gradient(to right, #434343 0%, black 100%)', '')"></div>
+                            <div class="banner-option" style="background: linear-gradient(to right, #fa709a 0%, #fee140 100%);" onclick="selectBanner(this, 'linear-gradient(to right, #fa709a 0%, #fee140 100%)', '')"></div>
+                            <div class="banner-option" style="background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);" onclick="selectBanner(this, 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)', '')"></div>
+                            <div class="banner-option" style="background: linear-gradient(to top, #30cfd0 0%, #330867 100%);" onclick="selectBanner(this, 'linear-gradient(to top, #30cfd0 0%, #330867 100%)', '')"></div>
+                        </div>
+                    </div>
+
+                    <div class="settings-panel" id="set-card">
+                        <h3 style="border:none; margin:0;"><i class="fa-regular fa-id-card" style="color:#8b5cf6;"></i> Profile Card</h3>
+                        <div style="text-align: center; padding: 40px; color: #94a3b8;">
+                            <i class="fa-solid fa-hammer" style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;"></i>
+                            <h2 style="font-family: 'Montserrat'; color: white;">Coming Soon</h2>
+                            <p class="text-sm">We are working on bringing custom profile cards to you.</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-panel" id="set-about" style="padding-bottom: 20px;">
+                        <h3 style="border:none; margin:0; font-size: 22px; display: flex; align-items: center; gap: 10px;">
+                            <i class="fa-solid fa-circle-info" style="color:#3b82f6;"></i> About BMRTA
+                        </h3>
+                        
+                        <div class="inner-card" style="margin-top: 10px; padding: 30px; border-radius: 12px; display: block;">
+                            <h4 style="font-size: 18px; margin-bottom: 15px; color: #3b82f6; font-family: 'Montserrat'; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 12px;">1. Full Form & Meaning</h4>
+                            
+                            <p style="font-size: 15px; line-height: 1.8; margin-bottom: 20px;">
+                                <strong style="color: inherit;">Acronym:</strong> BMRTA<br>
+                                <strong style="color: inherit;">Full Form:</strong> Bengaluru Metropolitan Regional Transit Authority
+                            </p>
+                            
+                            <ul style="list-style-type: disc; padding-left: 20px; font-size: 15px; line-height: 1.8; margin-bottom: 0;">
+                                <li style="margin-bottom: 12px;"><strong style="color: #3b82f6;">Bengaluru:</strong> The primary anchor and technological hub of the entire transit network.</li>
+                                <li style="margin-bottom: 12px;"><strong style="color: #3b82f6;">Metropolitan:</strong> Represents the dense, inner-city travel managed by the app (Namma Metro lines, BMTC city buses, daily urban commuters).</li>
+                                <li style="margin-bottom: 12px;"><strong style="color: #3b82f6;">Regional:</strong> Represents the expansion beyond the city limits—connecting intercity routes (Mysore, Chikkaballapura) and cross-border interstate hubs (Hosur in Tamil Nadu, Kuppam in Andhra Pradesh).</li>
+                                <li><strong style="color: #3b82f6;">Transit Authority:</strong> Represents the software itself acting as the ultimate "umbrella" platform that integrates tickets, wallets, and data across all these different zones.</li>
+                            </ul>
+                        </div>
+
+                        <div class="inner-card" style="margin-top: 5px; padding: 30px; border-radius: 12px; display: block;">
+                            <h4 style="font-size: 18px; margin-bottom: 20px; color: #3b82f6; font-family: 'Montserrat'; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 12px;">2. The BMRTA Agenda</h4>
+                            
+                            <div style="margin-bottom: 25px; display: block;">
+                                <div style="font-weight: 700; font-size: 16px; color: #3b82f6; margin-bottom: 8px;"><i class="fa-solid fa-map-location-dot" style="margin-right: 5px;"></i> I. Seamless Interstate & Intercity Integration</div>
+                                <div style="font-size: 15px; line-height: 1.7; margin-bottom: 5px;"><strong style="color: inherit;">The Goal:</strong> To eliminate the friction of crossing city and state borders for daily commuters.</div>
+                                <div style="font-size: 14px; line-height: 1.7; opacity: 0.9;"><strong style="color: inherit;">The Solution:</strong> Unifying fragmented transport systems (BMTC, KSRTC, Namma Metro, K-Ride Suburban Rail) under a single Smart Wallet and unified digital pass system.</div>
+                            </div>
+
+                            <div style="margin-bottom: 25px; display: block;">
+                                <div style="font-weight: 700; font-size: 16px; color: #22c55e; margin-bottom: 8px;"><i class="fa-solid fa-leaf" style="margin-right: 5px;"></i> II. Environmental Sustainability & Carbon Tracking</div>
+                                <div style="font-size: 15px; line-height: 1.7; margin-bottom: 5px;"><strong style="color: inherit;">The Goal:</strong> To actively reduce the region's carbon footprint and traffic congestion.</div>
+                                <div style="font-size: 14px; line-height: 1.7; opacity: 0.9;"><strong style="color: inherit;">The Solution:</strong> The app features a live CO₂ Emission Tracker that calculates exactly how many kilograms of carbon a user saves per trip, translating that impact into visual metrics.</div>
+                            </div>
+
+                            <div style="margin-bottom: 25px; display: block;">
+                                <div style="font-weight: 700; font-size: 16px; color: #f59e0b; margin-bottom: 8px;"><i class="fa-solid fa-gamepad" style="margin-right: 5px;"></i> III. Behavioral Shift via Gamification</div>
+                                <div style="font-size: 15px; line-height: 1.7; margin-bottom: 5px;"><strong style="color: inherit;">The Goal:</strong> To make daily commuting rewarding and engaging rather than a chore.</div>
+                                <div style="font-size: 14px; line-height: 1.7; opacity: 0.9;"><strong style="color: inherit;">The Solution:</strong> Implementing a robust reward ecosystem where commuters earn Travel Points, unlock Glory Titles, and receive digital scratch cards with cashbacks.</div>
+                            </div>
+
+                            <div style="display: block;">
+                                <div style="font-weight: 700; font-size: 16px; color: #ef4444; margin-bottom: 8px;"><i class="fa-solid fa-shield-halved" style="margin-right: 5px;"></i> IV. Community & Commuter Safety</div>
+                                <div style="font-size: 15px; line-height: 1.7; margin-bottom: 5px;"><strong style="color: inherit;">The Goal:</strong> To build a safe, informed transit community.</div>
+                                <div style="font-size: 14px; line-height: 1.7; opacity: 0.9;"><strong style="color: inherit;">The Solution:</strong> The platform includes real-time Live Advisories, a social Friends Leaderboard to compete on carbon savings, and built-in privacy features like "Moon Mode" to hide live locations.</div>
+                            </div>
+                        </div>
+
+                        <div class="inner-card" style="margin-top: 5px; padding: 30px; border-radius: 12px; display: block;">
+                            <h4 style="font-size: 18px; margin-bottom: 20px; color: #3b82f6; font-family: 'Montserrat'; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 12px;">3. The "One Ride" Ecosystem</h4>
+                            
+                            <div style="display: flex; gap: 25px; align-items: center; flex-wrap: wrap;">
+                                <div style="flex-shrink: 0; text-align: center; margin: 0 auto;">
+                                    <img src="Gemini_Generated_Image_i3bniei3bniei3bn.png" alt="One Ride Logo" style="width: 200px; height: auto; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); background: white;">
+                                </div>
+                                
+                                <div style="flex: 1; min-width: 250px;">
+                                    <p style="font-size: 15px; line-height: 1.7; margin-bottom: 15px;">
+                                        The <strong>"One Ride"</strong> emblem is the visual representation of our unified transit philosophy. It beautifully captures the integration of Karnataka's three major transport pillars into a single, seamless network:
+                                    </p>
+                                    <ul style="list-style-type: none; padding: 0; font-size: 14px; line-height: 1.8; margin-bottom: 0;">
+                                        <li style="margin-bottom: 8px;"><strong style="color: #2563eb;"><i class="fa-solid fa-bus" style="width: 20px;"></i> Blue (BMTC):</strong> Represents Bengaluru's extensive city and intercity bus network.</li>
+                                        <li style="margin-bottom: 8px;"><strong style="color: #9333ea;"><i class="fa-solid fa-train-subway" style="width: 20px;"></i> Purple (BMRCL):</strong> Represents the high-speed Namma Metro rapid transit system.</li>
+                                        <li style="margin-bottom: 8px;"><strong style="color: #16a34a;"><i class="fa-solid fa-train" style="width: 20px;"></i> Green (K-RIDE):</strong> Represents the expanding suburban rail infrastructure.</li>
+                                        <li><strong style="color: #1e293b;"><i class="fa-solid fa-k" style="width: 20px;"></i> Central 'K':</strong> Anchors the entire ecosystem in Karnataka, highlighting that one smart wallet unlocks the entire state.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                
+                <div class="settings-footer">
+                    <button class="history-btn" style="width: auto; padding: 10px 20px;" onclick="closeSettings()">Cancel</button>
+                    <button class="topup-btn" style="width: auto; background: #3b82f6;" onclick="saveSettings()">Save Changes</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="overlay" id="pass-activation-modal">
+        <div class="popup">
+            <h3 style="border:none; margin-bottom: 5px;"><i class="fa-solid fa-ticket" style="color:#22c55e;"></i> Activate Daily Pass?</h3>
+            <p class="text-sm">Once activated, this pass will expire tonight at 23:59.</p>
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button class="history-btn" style="flex:1;" onclick="document.getElementById('pass-activation-modal').classList.remove('active')">Cancel</button>
+                <button class="topup-btn" style="flex:1;" onclick="confirmActivatePass()">Activate Now</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="friend-profile-modal">
+        <div class="popup" style="max-width: 320px; padding: 0; overflow: hidden; border-radius: 16px;">
+            <div style="position: absolute; top: 12px; right: 15px; cursor: pointer; color: #fff; font-size: 20px; z-index: 10; text-shadow: 0 1px 5px rgba(0,0,0,0.8);" onclick="document.getElementById('friend-profile-modal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></div>
+            
+            <div id="modal-friend-banner" class="profile-banner" style="height: 110px; width: 100%; position: absolute; top: 0; left: 0;"></div>
+            
+            <div style="padding: 0 25px 25px 25px; position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; background: var(--popup-bg); margin-top: 110px;">
+                <div id="modal-friend-avatar" class="avatar-large"></div>
+                
+                <h3 id="modal-friend-name" style="border: none; margin-bottom: 2px; padding-bottom: 0;"></h3>
+                <div id="modal-friend-username" style="color: #3b82f6; font-size: 14px; font-weight: 500; margin-bottom: 20px;"></div>
+                
+                <div class="co2-stats" style="margin-bottom: 20px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; padding: 12px; width: 100%;">
+                    <i class="fa-solid fa-cloud-arrow-down" style="font-size: 20px; margin-bottom: 5px;"></i> <br>
+                    <span id="modal-friend-co2" style="font-size: 18px; font-weight: 800;"></span> Pts<br>
+                    <span style="font-size: 11px;">CO₂ Emissions Saved</span>
+                </div>
+                
+                <div class="text-sm" style="text-align: left; background: rgba(148, 163, 184, 0.1); padding: 15px; border-radius: 8px; width: 100%;">
+                    <div style="margin-bottom: 8px; font-size: 12px;"><i class="fa-solid fa-calendar-days" style="width: 20px; color: #3b82f6;"></i> <b>Friend Since:</b> <span id="modal-friend-since"></span></div>
+                    <div style="line-height: 1.4; font-size: 12px;"><i class="fa-solid fa-quote-left" style="width: 20px; color: #3b82f6;"></i> <span id="modal-friend-bio" style="font-style: italic;"></span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="feedback-modal">
+        <div class="popup">
+            <i class="fa-solid fa-circle-check" style="color: #22c55e; font-size: 48px; margin-bottom: 15px;"></i>
+            <h3 style="border:none; margin-bottom: 5px;">Feedback Submitted</h3>
+            <p class="text-sm">Thank you! Our support team will review your message.</p>
+        </div>
+    </div>
+
+    <div class="overlay" id="levelup-modal">
+        <div class="popup" style="border-color: #f59e0b;">
+            <i class="fa-solid fa-trophy" style="color: #f59e0b; font-size: 48px; margin-bottom: 15px;"></i>
+            <h3 style="border:none; margin-bottom: 5px; color:#f59e0b;">Level Up!</h3>
+            <p class="text-sm">You are now a Level <span id="popup-level">2</span> Commuter.</p>
+            
+            <div class="transit-animation-container">
+                <i class="fa-solid fa-train-subway anim-icon anim-metro"></i>
+                <i class="fa-solid fa-bus anim-icon anim-bus"></i>
+                <i class="fa-solid fa-train anim-icon anim-train"></i>
+            </div>
+            <p class="text-sm" style="color:#3b82f6; font-weight:bold; margin-bottom: 10px;">+ 10 Travel Points Earned!</p>
+            <p class="text-sm">You earned a Scratch Card! Opening...</p>
+        </div>
+    </div>
+
+    <div class="overlay" id="scratch-modal">
+        <div class="popup">
+            <h3 style="border:none; margin-bottom: 5px;"><i class="fa-solid fa-gift" style="color:#8b5cf6;"></i> You got a Reward!</h3>
+            <p class="text-sm">Scratch the silver area to reveal.</p>
+            
+            <div class="scratch-container" id="scratch-container">
+                <div class="scratch-reward" id="scratch-reward-content">
+                    <i class="fa-solid fa-face-smile-beam" style="font-size: 32px; margin-bottom: 5px;"></i>
+                    <span id="scratch-prize-text">₹50 Cashback!</span>
+                </div>
+                <canvas class="scratch-canvas" id="scratch-canvas"></canvas>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top: 15px;" id="pre-scratch-btns">
+                <button class="history-btn" style="flex:1;" onclick="scratchLater()">Scratch Later</button>
+                <button class="topup-btn" style="flex:1;" onclick="autoScratch()"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Scratch</button>
+            </div>
+            
+            <button class="topup-btn" id="btn-claim-reward" style="width:100%; margin-top:15px; display:none;" onclick="claimReward()">Claim Reward</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="history-modal">
+        <div class="popup">
+            <h3 style="border:none; margin-bottom: 5px;"><i class="fa-solid fa-clock-rotate-left"></i> Reward History</h3>
+            <div class="history-list" id="history-list"></div>
+            <button class="history-btn" style="width:100%; margin-top:15px;" onclick="document.getElementById('history-modal').classList.remove('active')">Close</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
