@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-
 </head>
 <body class="light-theme">
 
@@ -32,10 +31,85 @@
             <a onclick="openSettings()">Settings</a>
             <button id="theme-toggle" class="btn-theme-toggle"><i class="fa-solid fa-moon"></i></button>
             <a href="index.html" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+
+            <!-- Mobile Hamburger Menu Button -->
+            <button id="mobile-menu-toggle" class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle navigation">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Navigation Drawer -->
+        <div id="mobile-nav-menu" class="mobile-nav-menu">
+            <a href="index.html" class="mobile-menu-item dashboard-item">
+                <i class="fa-solid fa-gauge-high" style="color: #38bdf8;"></i> Live Dashboard
+            </a>
+
+            <button class="mobile-menu-item active" onclick="switchTab('status', this)">
+                <i class="fa-solid fa-user-astronaut" style="color: #38bdf8;"></i> Status
+            </button>
+
+            <button class="mobile-menu-item" onclick="switchTab('travel', this)">
+                <i class="fa-solid fa-route" style="color: #22c55e;"></i> Travel History
+            </button>
+
+            <button class="mobile-menu-item" onclick="switchTab('personal', this)">
+                <i class="fa-regular fa-id-card" style="color: #007bff;"></i> Personal Information
+            </button>
+
+            <button class="mobile-menu-item" onclick="switchTab('wallet', this)">
+                <i class="fa-solid fa-wallet" style="color: #f59e0b;"></i> Smart Wallet & Passes
+            </button>
+
+            <button class="mobile-menu-item" onclick="switchTab('rewards', this)">
+                <i class="fa-solid fa-trophy" style="color: #06b6d4;"></i> Activity & Rewards
+            </button>
+
+            <button class="mobile-menu-item" onclick="switchTab('friends', this)">
+                <i class="fa-solid fa-user-group" style="color: #ec4899;"></i> Friends
+            </button>
+
+            <button class="mobile-menu-item" onclick="switchTab('transit', this)">
+                <i class="fa-solid fa-train-tram" style="color: #f43f5e;"></i> Transit Details
+            </button>
+
+            <button class="mobile-menu-item" onclick="switchTab('support', this)">
+                <i class="fa-solid fa-headset" style="color: #8b5cf6;"></i> Support & Feedback
+            </button>
+
+            <div class="mobile-menu-divider"></div>
+
+            <div class="mobile-menu-stats">
+                <div class="menu-stat-card c-green">
+                    <i class="fa-solid fa-cloud-arrow-down"></i>
+                    <div>
+                        <div class="menu-stat-val" id="menu-co2">52.0 kg</div>
+                        <div class="menu-stat-lbl">CO₂ Emissions Saved</div>
+                    </div>
+                </div>
+                <div class="menu-stat-card c-orange">
+                    <i class="fa-solid fa-piggy-bank"></i>
+                    <div>
+                        <div class="menu-stat-val" id="menu-money">₹3,450</div>
+                        <div class="menu-stat-lbl">Saved vs Driving</div>
+                    </div>
+                </div>
+                <div class="menu-stat-card c-blue">
+                    <i class="fa-solid fa-coins"></i>
+                    <div>
+                        <div class="menu-stat-val" id="menu-travel-pts">0 Pts</div>
+                        <div class="menu-stat-lbl">Travel Points</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mobile-menu-safety">
+                <a href="tel:1091" class="nav-safety-btn emergency"><i class="fa-solid fa-phone"></i> Helpline (1091)</a>
+                <a href="#" class="nav-safety-btn report" onclick="alert('Redirecting to Report Portal...')"><i class="fa-solid fa-circle-exclamation"></i> Report Issue</a>
+            </div>
         </div>
     </nav>
 
-    <div class="profile-wrapper">
+    <div class="profile-wrapper" id="profile-wrapper" data-tab="status">
         
         <aside class="left-col">
             <div class="glass-panel profile-container">
@@ -597,7 +671,7 @@
 
         <aside class="static-col">
             
-            <div class="glass-panel" style="padding: 20px; position: relative; overflow: hidden;">
+            <div id="card-advisory" class="glass-panel" style="padding: 20px; position: relative; overflow: hidden;">
                 <h3 style="font-size: 16px; border:none; margin-bottom:10px;"><i class="fa-solid fa-cloud-sun-rain" style="color: #0ea5e9;"></i> Live Advisory</h3>
                 <div id="advisory-container" class="advisory-container"></div>
                 <div class="advisory-progress-track">
@@ -605,7 +679,7 @@
                 </div>
             </div>
 
-            <div class="glass-panel" style="padding: 20px;">
+            <div id="card-impact" class="glass-panel" style="padding: 20px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom:15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
                     <h3 style="font-size: 16px; border:none; margin:0;"><i class="fa-solid fa-chart-pie" style="color: #10b981;"></i> My Impact</h3>
                     <div class="lb-toggle">
@@ -648,7 +722,7 @@
                 </div>
             </div>
 
-            <div class="glass-panel" style="padding: 20px;">
+            <div id="card-leaderboard" class="glass-panel" style="padding: 20px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom:15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
                     <h3 style="font-size: 16px; border:none; margin:0;"><i class="fa-solid fa-ranking-star" style="color: #f59e0b;"></i> Leaderboard</h3>
                     <div class="lb-toggle">
@@ -659,7 +733,7 @@
                 <div id="leaderboard-list"></div>
             </div>
 
-            <div class="glass-panel" style="padding: 20px; position: relative; overflow: hidden;">
+            <div id="card-tips" class="glass-panel" style="padding: 20px; position: relative; overflow: hidden;">
                 <h3 style="font-size: 16px; border:none; margin:0; margin-bottom:10px;"><i class="fa-solid fa-lightbulb" style="color: #eab308;"></i> Did you know?</h3>
                 <div style="display:flex; gap:12px; align-items:flex-start;">
                     <i class="fa-solid fa-circle-info" style="color:#3b82f6; margin-top:3px;"></i>
