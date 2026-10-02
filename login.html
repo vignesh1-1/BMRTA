@@ -425,6 +425,8 @@
     </div>
 
     <script>
+        // LIVE RENDER BACKEND API BASE
+        const API_BASE = "https://bmrta-backend.onrender.com/api";
         const card = document.getElementById("authCard");
 
         // 1. Direct Card Flip Handlers
@@ -461,7 +463,7 @@
         setupPasswordToggle("toggleLoginBtn", "loginPassword");
         setupPasswordToggle("toggleSignupBtn", "signupPassword");
 
-        // 3. FastAPI Backend Login
+        // 3. Render Backend Login Submission
         document.getElementById("formLogin").addEventListener("submit", async function (e) {
             e.preventDefault();
             const btn = this.querySelector(".main-btn");
@@ -472,7 +474,7 @@
             btn.innerText = "AUTHENTICATING...";
 
             try {
-                const res = await fetch("/api/login", {
+                const res = await fetch(`${API_BASE}/login`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ email, password })
@@ -495,7 +497,7 @@
             }
         });
 
-        // 4. FastAPI Backend Registration
+        // 4. Render Backend Registration Submission
         document.getElementById("formSignup").addEventListener("submit", async function (e) {
             e.preventDefault();
             const btn = this.querySelector(".main-btn");
@@ -513,7 +515,7 @@
             btn.innerText = "CREATING ACCOUNT...";
 
             try {
-                const res = await fetch("/api/signup", {
+                const res = await fetch(`${API_BASE}/signup`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ name, email, password })
