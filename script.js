@@ -1,24 +1,56 @@
-// --- GLOBAL VARIABLES ---
-let co2Points = parseFloat(localStorage.getItem('co2_points')) || 5200;
-let currentLevel = parseInt(localStorage.getItem('reward_level')) || 1;
-let travelsInLevel = parseInt(localStorage.getItem('reward_travels')) || 0;
-let travelPoints = parseInt(localStorage.getItem('travel_points')) || 0;
-let rewardHistory = JSON.parse(localStorage.getItem('reward_history')) || [];
+// ============================================================================
+// 1. CONFIGURATION & DATABASE CONNECTIVITY
+// ============================================================================
+const API_BASE = "https://bmrta-backend.onrender.com/api";
+const userEmail = localStorage.getItem("user_email");
 
-let fullInventory = JSON.parse(localStorage.getItem('rta_inventory')) || { unscratched: [], active: [], scratched: [] };
+// Authenticated fetch wrapper
+async function apiRequest(endpoint, method = "GET", body = null) {
+    const headers = { 
+        "Content-Type": "application/json",
+        "X-User-Email": userEmail || ""
+    };
+
+    const config = { method, headers };
+    if (body) config.body = JSON.stringify(body);
+
+    const response = await fetch(`${API_BASE}${endpoint}`, config);
+    if (response.status === 401 && !window.location.pathname.endsWith("login.html")) {
+        localStorage.removeItem("user_email");
+        localStorage.removeItem("bmrta_token");
+        window.location.href = "login.html";
+        return null;
+    }
+    return response;
+}
+
+if (!userEmail && !window.location.pathname.endsWith("login.html")) {
+    window.location.href = "login.html";
+}
+
+// ============================================================================
+// 2. CORE STATE VARIABLES
+// ============================================================================
+let currentUser = null;
+let co2Points = 0;
+let currentLevel = 1;
+let travelsInLevel = 0;
+let travelPoints = 0;
+let rewardHistory = [];
+let fullInventory = { unscratched: [], active: [], scratched: [] };
 
 let pendingSettings = {
-    bio: `"Eco-warrior & daily commuter. Let's save the planet one trip at a time!"`,
+    bio: "",
     titleClass: 'tag-commuter',
     titleHtml: '<i class="fa-solid fa-train-subway"></i> Daily Commuter',
-    avatarHtml: 'VV',
+    avatarHtml: 'AV',
     avatarBg: 'linear-gradient(135deg, #007bff, #06b6d4)',
     avatarAnimClass: '',
     bannerBg: 'linear-gradient(135deg, #1e3a8a, #3b82f6)',
     bannerAnimClass: ''
 };
 
-let currentUserAvatarHtml = 'VV';
+let currentUserAvatarHtml = 'AV';
 let currentUserAvatarBg = 'linear-gradient(135deg, #007bff, #06b6d4)';
 let currentUserAvatarAnimClass = '';
 let currentUserBannerBg = 'linear-gradient(135deg, #1e3a8a, #3b82f6)';
@@ -31,6 +63,7 @@ let pendingCardIndex = -1;
 let isMoonMode = false;
 let passToActivate = null;
 
+// ALL 25 GLORY TAGS
 const gloryTagsConfig = [
     { id: 'tag-commuter', name: 'Daily Commuter', icon: 'fa-train-subway', unlock: 1, class: 'tag-commuter' },
     { id: 'tag-earlybird', name: 'Early Bird', icon: 'fa-sun', unlock: 1, class: 'tag-earlybird' },
@@ -59,33 +92,129 @@ const gloryTagsConfig = [
     { id: 'tag-deity', name: 'Transit Deity', icon: 'fa-bolt', unlock: 50, class: 'tag-deity' }
 ];
 
-const fakeFriendsList = [
+let fakeFriendsList = [
     { name: "Rahul Verma", username: "@rahul_v89", co2: 4100, since: "Jan 2026", bio: "BMTC all the way.", bannerBg: "linear-gradient(0deg, #ff4e50, #f9d423, #ff4e50)", bannerAnimClass: "banner-inferno", avatarBg: "#ea580c", avatarHtml: "<i class='fa-solid fa-bus avatar-bg-icon'></i><span class='avatar-text'>RV</span>", animClass: "anim-wobble" },
     { name: "Sneha Reddy", username: "@sneha_r", co2: 2850, since: "Feb 2026", bio: "Carpooler and weekend walker.", bannerBg: "linear-gradient(180deg, #0ea5e9 0%, #06b6d4 50%, #ffffff 50%, #ffffff 100%)", bannerAnimClass: "banner-aurora", avatarBg: "rgba(0,20,40,0.8)", avatarHtml: "<i class='fa-solid fa-microchip'></i>", animClass: "anim-hologram" },
     { name: "Kiran Kumar", username: "@kiran_k", co2: 5020, since: "Dec 2025", bio: "Public transport is my second home.", bannerBg: "radial-gradient(circle, #ffffff 1px, transparent 1px) #0b0c10", bannerAnimClass: "banner-starlight", avatarBg: "linear-gradient(135deg, #10b981, #064e3b)", avatarHtml: "<i class='fa-solid fa-lungs'></i>", animClass: "anim-breathing" },
-    { name: "Aditi Sharma", username: "@aditi_s", co2: 3200, since: "Mar 2025", bio: "Metro enthusiast.", bannerBg: "repeating-linear-gradient(45deg, #2b2b2b, #2b2b2b 10px, #1a1a1a 10px, #1a1a1a 20px)", bannerAnimClass: "banner-glitch", avatarBg: "linear-gradient(135deg, #f59e0b, #d97706)", avatarHtml: "<i class='fa-solid fa-person-walking-luggage'></i>", animClass: "" },
-    { name: "Pooja Iyer", username: "@pooja_iyer", co2: 1900, since: "Apr 2026", bio: "Weekend traveler & clean energy fan.", bannerBg: "linear-gradient(135deg, #ff007f, #00d2ff, #7a00ff, #ff007f)", bannerAnimClass: "banner-prismatic", avatarBg: "#7c3aed", avatarHtml: "<i class='fa-solid fa-train avatar-bg-icon'></i> <span class='avatar-text'>PI</span>", animClass: "anim-float" },
-    { name: "Arjun M", username: "@arjun_m", co2: 3750, since: "May 2026", bio: "Let's reduce our carbon footprint!", bannerBg: "linear-gradient(to right, #0f2027, #203a43, #2c5364)", bannerAnimClass: "", avatarBg: "rgba(0, 40, 40, 0.8)", avatarHtml: "<i class='fa-solid fa-satellite-dish' style='color:#0ff'></i>", animClass: "anim-radar" },
-    { name: "Deepak S", username: "@deepak_s", co2: 2100, since: "Mar 2026", bio: "Always taking the Green Line.", bannerBg: "linear-gradient(to right, #134e5e, #71b280)", bannerAnimClass: "", avatarBg: "#10b981", avatarHtml: "<i class='fa-solid fa-train-subway avatar-bg-icon'></i><span class='avatar-text'>DS</span>", animClass: "" },
-    { name: "Kavya N", username: "@kavya_n", co2: 4400, since: "Jan 2026", bio: "Sustainable living advocate.", bannerBg: "linear-gradient(90deg, #4c1d95, #a855f7)", bannerAnimClass: "", avatarBg: "linear-gradient(135deg, #ec4899, #be185d)", avatarHtml: "<i class='fa-solid fa-user-ninja'></i>", animClass: "" },
-    { name: "Manoj Das", username: "@manoj_das", co2: 1200, since: "Jun 2026", bio: "Just started using RTA passes.", bannerBg: "linear-gradient(to right, #870000, #190a05)", bannerAnimClass: "", avatarBg: "#b45309", avatarHtml: "<span class='avatar-text'>MD</span>", animClass: "" },
-    { name: "Nisha Patel", username: "@nisha_p", co2: 3300, since: "Feb 2026", bio: "Cycling and Metros.", bannerBg: "linear-gradient(to right, #2b5876, #4e4376)", bannerAnimClass: "", avatarBg: "linear-gradient(135deg, #10b981, #047857)", avatarHtml: "<i class='fa-solid fa-bicycle'></i>", animClass: "anim-float" }
+    { name: "Aditi Sharma", username: "@aditi_s", co2: 3200, since: "Mar 2025", bio: "Metro enthusiast.", bannerBg: "repeating-linear-gradient(45deg, #2b2b2b, #2b2b2b 10px, #1a1a1a 10px, #1a1a1a 20px)", bannerAnimClass: "banner-glitch", avatarBg: "linear-gradient(135deg, #f59e0b, #d97706)", avatarHtml: "<i class='fa-solid fa-person-walking-luggage'></i>", animClass: "" }
 ];
 
-const fakeRequestsList = [
-    { name: "Priya Sharma", username: "@priya_s", co2: 2100, since: "Pending", bio: "Waiting for approval...", bannerBg: "linear-gradient(to right, #870000, #190a05)", bannerAnimClass: "", avatarBg: "#eab308", avatarHtml: "<span class='avatar-text'>PS</span>", animClass: "" },
-    { name: "Rohan Gupta", username: "@rohan_g", co2: 1800, since: "Pending", bio: "Waiting for approval...", bannerBg: "linear-gradient(to right, #2b5876, #4e4376)", bannerAnimClass: "", avatarBg: "linear-gradient(135deg, #10b981, #047857)", avatarHtml: "<i class='fa-solid fa-bicycle'></i>", animClass: "anim-float" }
-];
+let fakeRequestsList = [];
 
-const fakeAllUsersList = [
-    { name: "Suresh Gowda", co2: 12500, bannerBg: "linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c)", bannerAnimClass: "", avatarBg: "linear-gradient(135deg, #eab308, #ca8a04)", avatarHtml: "<i class='fa-solid fa-lightbulb'></i>", animClass: "anim-flicker" },
-    { name: "Priya K", co2: 11200, bannerBg: "linear-gradient(90deg, #4c1d95, #a855f7)", bannerAnimClass: "", avatarBg: "#8b5cf6", avatarHtml: "<span class='avatar-text'>PK</span>", animClass: "anim-pulse-glow" },
-    { name: "Amit Patel", co2: 9800, bannerBg: "linear-gradient(to right, #134e5e, #71b280)", bannerAnimClass: "", avatarBg: "linear-gradient(135deg, #10b981, #047857)", avatarHtml: "<i class='fa-solid fa-bicycle'></i>", animClass: "" },
-    { name: "Anita S", co2: 8900, bannerBg: "linear-gradient(to right, #ff5f6d, #ffc371)", bannerAnimClass: "", avatarBg: "#ea580c", avatarHtml: "<span class='avatar-text'>AS</span>", animClass: "" },
-    { name: "Vikram Rao", co2: 8500, bannerBg: "linear-gradient(135deg, #1e3a8a, #3b82f6)", bannerAnimClass: "", avatarBg: "linear-gradient(135deg, #3b82f6, #1d4ed8)", avatarHtml: "<i class='fa-solid fa-user-graduate'></i>", animClass: "" }
-];
+// ============================================================================
+// 3. BACKEND HYDRATION FROM MONGODB ATLAS
+// ============================================================================
+async function syncProfileFromDatabase() {
+    try {
+        const res = await apiRequest("/user/me", "GET");
+        if (!res || !res.ok) return;
 
-// --- NAVIGATION & DYNAMIC TAB SWITCHER ---
+        currentUser = await res.json();
+
+        // 1. Core Profile Details Loaded Directly from MongoDB
+        co2Points = currentUser.co2_points || 0;
+        currentLevel = currentUser.reward_level || 1;
+        travelsInLevel = currentUser.travels_in_level || 0;
+        travelPoints = currentUser.travel_points || 0;
+        fullInventory = currentUser.inventory || { unscratched: [], active: [], scratched: [] };
+        isMoonMode = currentUser.moon_mode || false;
+
+        // User Names & Handles
+        const nameNode = document.getElementById("profile-user-name");
+        if (nameNode) nameNode.innerText = currentUser.name || "Commuter";
+
+        const handleNode = document.getElementById("profile-user-handle");
+        if (handleNode) handleNode.innerText = currentUser.username || "@user";
+
+        const ncmcName = document.getElementById("ncmc-user-name");
+        if (ncmcName) ncmcName.innerText = (currentUser.name || "COMMUTER").toUpperCase();
+
+        const bioNode = document.getElementById("main-user-bio");
+        if (bioNode && currentUser.bio) bioNode.innerText = `"${currentUser.bio}"`;
+
+        // Personal Information Grid (Real Data)
+        const infoName = document.getElementById("info-name");
+        if (infoName) infoName.innerText = currentUser.name || "--";
+
+        const infoUser = document.getElementById("info-username");
+        if (infoUser) infoUser.innerText = currentUser.username || "--";
+
+        const infoEmail = document.getElementById("info-email");
+        if (infoEmail) infoEmail.innerText = currentUser.email || "--";
+
+        const infoLevel = document.getElementById("info-level");
+        if (infoLevel) infoLevel.innerText = `Level ${currentLevel}`;
+
+        // 2. Wallets & Balances (No Duplicate Values)
+        const bal = parseFloat(currentUser.wallet_balance || 0).toFixed(2);
+        const dispBal = document.getElementById("display-wallet-balance");
+        if (dispBal) dispBal.innerText = "₹ " + bal;
+
+        // Active pass check
+        const hasActivePass = currentUser.inventory?.active?.some(p => p.isActivated);
+        const passBadge = document.getElementById("wallet-active-pass-badge");
+        if (passBadge) passBadge.style.display = hasActivePass ? "block" : "none";
+
+        // 3. User Avatar
+        if (currentUser.avatar) {
+            currentUserAvatarHtml = currentUser.avatar.html || currentUser.name.slice(0, 2).toUpperCase();
+            currentUserAvatarBg = currentUser.avatar.bg || "#007bff";
+            currentUserAvatarAnimClass = currentUser.avatar.anim || '';
+
+            const av = document.getElementById("main-avatar-inner");
+            if (av) {
+                av.innerHTML = currentUserAvatarHtml;
+                av.style.background = currentUserAvatarBg;
+                av.className = `avatar-inner ${currentUserAvatarAnimClass}`;
+            }
+            pendingSettings.avatarHtml = currentUserAvatarHtml;
+            pendingSettings.avatarBg = currentUserAvatarBg;
+            pendingSettings.avatarAnimClass = currentUserAvatarAnimClass;
+        }
+
+        // 4. User Banner
+        if (currentUser.banner) {
+            currentUserBannerBg = currentUser.banner.bg || "#1e3a8a";
+            currentUserBannerAnimClass = currentUser.banner.anim || '';
+
+            const mb = document.getElementById("main-profile-banner");
+            if (mb) {
+                mb.style.background = currentUserBannerBg;
+                mb.className = `profile-banner ${currentUserBannerAnimClass || 'default-banner'}`;
+            }
+            pendingSettings.bannerBg = currentUserBannerBg;
+            pendingSettings.bannerAnimClass = currentUserBannerAnimClass;
+        }
+
+        // 5. User Glory Title
+        if (currentUser.glory_tag) {
+            const tag = document.getElementById("main-user-tag");
+            if (tag) {
+                tag.className = `user-tag ${currentUser.glory_tag}`;
+                tag.innerHTML = currentUser.glory_html || '<i class="fa-solid fa-train-subway"></i> Daily Commuter';
+            }
+            pendingSettings.titleClass = currentUser.glory_tag;
+            pendingSettings.titleHtml = currentUser.glory_html;
+        }
+
+        // 6. User Theme
+        if (currentUser.theme === "dark-theme") {
+            document.body.classList.replace("light-theme", "dark-theme");
+            const icon = document.querySelector("#theme-toggle i");
+            if (icon) icon.classList.replace("fa-moon", "fa-sun");
+        }
+
+        syncMoonModeUI();
+        updateUI();
+        renderLeaderboard(currentLeaderboardTab);
+    } catch (e) {
+        console.error("Database sync error:", e);
+    }
+}
+
+// ============================================================================
+// 4. NAVIGATION, TABS & DRAWER
+// ============================================================================
 function switchTab(tabId, btnElement) {
     const wrapper = document.getElementById('profile-wrapper');
     if (wrapper) wrapper.setAttribute('data-tab', tabId);
@@ -97,11 +226,9 @@ function switchTab(tabId, btnElement) {
     const targetSection = document.getElementById('section-' + tabId);
     if (targetSection) targetSection.classList.add('active');
 
-    // Sync Desktop Button
     const deskBtn = document.querySelector(`.profile-btn[onclick*="'${tabId}'"]`);
     if (deskBtn) deskBtn.classList.add('active');
 
-    // Sync Mobile Drawer Item
     const mobBtn = document.querySelector(`.mobile-menu-item[onclick*="'${tabId}'"]`);
     if (mobBtn) mobBtn.classList.add('active');
 
@@ -110,12 +237,10 @@ function switchTab(tabId, btnElement) {
         renderInventory();
     }
 
-    // Auto-close menu drawer when an item is selected
     const menu = document.getElementById('mobile-nav-menu');
     if (menu) menu.classList.remove('active');
 }
 
-// --- MOBILE MENU TOGGLE ---
 function toggleMobileMenu() {
     const menu = document.getElementById('mobile-nav-menu');
     if (menu) menu.classList.toggle('active');
@@ -129,23 +254,65 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// --- SETTINGS LOGIC ---
+// ============================================================================
+// 5. WALLET TOP-UP WITH SERVER WRITE
+// ============================================================================
+async function addFunds(amountObj = null) {
+    const input = document.getElementById('topup-amount');
+    const amount = amountObj || parseFloat(input ? input.value : 0);
+    if (!amount || amount <= 0) return alert("Please enter a valid amount.");
+
+    try {
+        const res = await apiRequest("/user/wallet/topup", "POST", { amount });
+        if (res && res.ok) {
+            const data = await res.json();
+            const newBal = parseFloat(data.wallet_balance).toFixed(2);
+
+            const dispBal = document.getElementById('display-wallet-balance');
+            if (dispBal) dispBal.innerText = '₹ ' + newBal;
+
+            if (input) input.value = '';
+
+            const btn = document.querySelector('.topup-btn');
+            if (btn && !amountObj) {
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Added!';
+                setTimeout(() => { btn.innerHTML = '<i class="fa-solid fa-plus"></i> Add Funds'; }, 2000);
+            }
+        }
+    } catch (err) {
+        console.error("Wallet update failed:", err);
+    }
+}
+
+// ============================================================================
+// 6. SETTINGS MODAL & PREFERENCE PERSISTENCE
+// ============================================================================
 function openSettings() {
-    document.getElementById('settings-modal').classList.add('active');
-    document.getElementById('setting-moon-toggle').checked = isMoonMode;
-    document.getElementById('setting-bio-input').value = document.getElementById('main-user-bio').innerText;
+    const modal = document.getElementById('settings-modal');
+    if (!modal) return;
+    modal.classList.add('active');
+    
+    const moon = document.getElementById('setting-moon-toggle');
+    if (moon) moon.checked = isMoonMode;
+
+    const bio = document.getElementById('setting-bio-input');
+    const userBio = document.getElementById('main-user-bio');
+    if (bio && userBio) bio.value = userBio.innerText.replace(/"/g, '');
+
     renderGloryTags('all');
 }
 
 function closeSettings() {
-    document.getElementById('settings-modal').classList.remove('active');
+    const modal = document.getElementById('settings-modal');
+    if (modal) modal.classList.remove('active');
 }
 
 function switchSettingsTab(tab, btn) {
     document.querySelectorAll('.settings-tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('set-' + tab).classList.add('active');
+    if (btn) btn.classList.add('active');
+    const panel = document.getElementById('set-' + tab);
+    if (panel) panel.classList.add('active');
 }
 
 function renderGloryTags(filter, btnElement) {
@@ -154,6 +321,7 @@ function renderGloryTags(filter, btnElement) {
         btnElement.classList.add('active');
     }
     const grid = document.getElementById('glory-tags-grid');
+    if (!grid) return;
     grid.innerHTML = '';
 
     gloryTagsConfig.forEach(tag => {
@@ -164,9 +332,7 @@ function renderGloryTags(filter, btnElement) {
         let div = document.createElement('div');
         div.className = `glory-card ${tag.class} ${pendingSettings.titleClass === tag.class ? 'selected' : ''} ${!isOwned ? 'locked' : ''}`;
 
-        if (!isOwned) {
-            div.setAttribute('data-unlock', tag.unlock);
-        }
+        if (!isOwned) div.setAttribute('data-unlock', tag.unlock);
         div.innerHTML = `<i class="fa-solid ${tag.icon}"></i> ${tag.name}`;
         div.onclick = () => selectGlory(div, tag.class, `<i class='fa-solid ${tag.icon}'></i> ${tag.name}`);
 
@@ -196,46 +362,53 @@ function selectBanner(el, bgValue, animClass) {
     pendingSettings.bannerAnimClass = animClass;
 }
 
-function saveSettings() {
-    let bioText = document.getElementById('setting-bio-input').value;
-    document.getElementById('main-user-bio').innerText = bioText;
+async function saveSettings() {
+    let bioText = document.getElementById('setting-bio-input')?.value || "";
+    let toggleChecked = document.getElementById('setting-moon-toggle')?.checked || false;
 
-    let toggleChecked = document.getElementById('setting-moon-toggle').checked;
     if (toggleChecked !== isMoonMode) toggleMoonMode();
 
-    let tag = document.getElementById('main-user-tag');
-    tag.className = 'user-tag ' + pendingSettings.titleClass;
-    tag.innerHTML = pendingSettings.titleHtml;
+    const payload = {
+        bio: bioText,
+        moon_mode: toggleChecked,
+        glory_tag: pendingSettings.titleClass,
+        glory_html: pendingSettings.titleHtml,
+        avatar_html: pendingSettings.avatarHtml,
+        avatar_bg: pendingSettings.avatarBg,
+        avatar_anim: pendingSettings.avatarAnimClass,
+        banner_bg: pendingSettings.bannerBg,
+        banner_anim: pendingSettings.bannerAnimClass
+    };
 
-    let av = document.getElementById('main-avatar-inner');
-    av.innerHTML = pendingSettings.avatarHtml;
-    av.style.background = pendingSettings.avatarBg;
-    av.className = 'avatar-inner ' + pendingSettings.avatarAnimClass;
-
-    let mb = document.getElementById('main-profile-banner');
-    mb.style.background = pendingSettings.bannerBg;
-    mb.className = 'profile-banner ' + (pendingSettings.bannerAnimClass || 'default-banner');
-
-    currentUserAvatarHtml = pendingSettings.avatarHtml;
-    currentUserAvatarBg = pendingSettings.avatarBg;
-    currentUserAvatarAnimClass = pendingSettings.avatarAnimClass;
-    currentUserBannerBg = pendingSettings.bannerBg;
-    currentUserBannerAnimClass = pendingSettings.bannerAnimClass;
-
-    renderLeaderboard(currentLeaderboardTab);
-    closeSettings();
+    try {
+        const res = await apiRequest("/user/customize", "PUT", payload);
+        if (res && res.ok) {
+            closeSettings();
+            await syncProfileFromDatabase();
+        }
+    } catch (e) {
+        alert("Failed to save changes to database.");
+    }
 }
 
-// --- MOON MODE LOGIC ---
-function toggleMoonMode() {
+async function toggleMoonMode() {
     isMoonMode = !isMoonMode;
+    syncMoonModeUI();
+
+    try {
+        await apiRequest("/user/customize", "PUT", { moon_mode: isMoonMode });
+    } catch (e) {}
+}
+
+function syncMoonModeUI() {
     const dot = document.getElementById('user-status-dot');
     const txt = document.getElementById('user-status-text');
     const icon = document.getElementById('moon-mode-icon');
+    if (!dot || !txt || !icon) return;
 
     if (isMoonMode) {
         dot.className = 'status-dot offline';
-        txt.innerText = 'Offline';
+        txt.innerText = 'Offline (Ghost Mode)';
         icon.innerText = '🌑';
     } else {
         dot.className = 'status-dot';
@@ -247,274 +420,15 @@ function toggleMoonMode() {
 function switchImpactTab(tab) {
     document.querySelectorAll('.impact-tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.impact-content-panel').forEach(c => c.style.display = 'none');
-    document.getElementById('btn-tab-' + tab).classList.add('active');
-    document.getElementById('impact-content-' + tab).style.display = 'block';
+    const tabBtn = document.getElementById('btn-tab-' + tab);
+    if (tabBtn) tabBtn.classList.add('active');
+    const impactPanel = document.getElementById('impact-content-' + tab);
+    if (impactPanel) impactPanel.style.display = 'block';
 }
 
-// --- THEME TOGGLE LOGIC ---
-const themeBtn = document.getElementById('theme-toggle');
-const themeIcon = themeBtn.querySelector('i');
-if (localStorage.getItem('bengaluru_theme') === 'dark') {
-    document.body.classList.replace('light-theme', 'dark-theme');
-    themeIcon.classList.replace('fa-moon', 'fa-sun');
-}
-themeBtn.addEventListener('click', () => {
-    if (document.body.classList.contains('light-theme')) {
-        document.body.classList.replace('light-theme', 'dark-theme');
-        themeIcon.classList.replace('fa-moon', 'fa-sun');
-        localStorage.setItem('bengaluru_theme', 'dark');
-    } else {
-        document.body.classList.replace('dark-theme', 'light-theme');
-        themeIcon.classList.replace('fa-sun', 'fa-moon');
-        localStorage.setItem('bengaluru_theme', 'light');
-    }
-    updateAvatarRing();
-});
-
-// --- FRIENDS SECTION LOGIC ---
-function renderFriends() {
-    const container = document.getElementById('friend-list-view');
-    container.innerHTML = '';
-    fakeFriendsList.forEach(friend => {
-        let card = document.createElement('div');
-        card.className = `friend-card ${friend.bannerAnimClass || ''}`;
-        card.style.background = friend.bannerBg;
-
-        card.innerHTML = `
-            <div style="display: flex; align-items: center; width: 100%;">
-                <div class="friend-avatar ${friend.animClass}" style="background: ${friend.avatarBg}">${friend.avatarHtml}</div>
-                <div style="flex: 1;">
-                    <div style="font-weight: 600; font-family: 'Montserrat'; color: white; text-shadow: 0 1px 4px rgba(0,0,0,0.9);">${friend.name}</div>
-                    <div class="text-sm" style="color: white; text-shadow: 0 1px 4px rgba(0,0,0,0.9);">${friend.username}</div>
-                </div>
-                <div style="color: #4ade80; font-weight: bold; font-size: 14px; background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);">
-                    <i class="fa-solid fa-leaf"></i> ${friend.co2} Pts
-                </div>
-            </div>
-        `;
-        card.onclick = () => openFriendModal(friend);
-        container.appendChild(card);
-    });
-}
-
-function renderRequests() {
-    const container = document.getElementById('friend-requests-view');
-    container.innerHTML = '';
-    if (!fakeRequestsList || fakeRequestsList.length === 0) {
-        container.innerHTML = '<div class="text-sm" style="text-align:center; padding: 20px;">No pending requests.</div>';
-        document.getElementById('req-count').innerText = "0";
-        return;
-    }
-    document.getElementById('req-count').innerText = fakeRequestsList.length;
-
-    fakeRequestsList.forEach((req, index) => {
-        let card = document.createElement('div');
-        card.className = `friend-card ${req.bannerAnimClass || ''}`;
-        card.style.background = req.bannerBg;
-
-        card.innerHTML = `
-            <div style="display: flex; align-items: center; width: 100%; cursor: pointer;" class="req-profile-click">
-                <div class="friend-avatar ${req.animClass}" style="background: ${req.avatarBg}">${req.avatarHtml}</div>
-                <div style="flex: 1;">
-                    <div style="font-weight: 600; font-family: 'Montserrat'; color: white; text-shadow: 0 1px 4px rgba(0,0,0,0.9);">${req.name}</div>
-                    <div class="text-sm" style="color: white; text-shadow: 0 1px 4px rgba(0,0,0,0.9);">${req.username}</div>
-                </div>
-            </div>
-            <div style="display: flex; gap: 8px;">
-                <button class="topup-btn req-accept-btn" style="padding: 6px 12px; font-size: 12px; background: #22c55e;"><i class="fa-solid fa-check"></i></button>
-                <button class="topup-btn req-decline-btn" style="padding: 6px 12px; font-size: 12px; background: #ef4444;"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-        `;
-
-        card.querySelector('.req-profile-click').onclick = () => openFriendModal(req);
-        card.querySelector('.req-accept-btn').onclick = (e) => acceptRequest(index, e);
-        card.querySelector('.req-decline-btn').onclick = (e) => declineRequest(index, e);
-
-        container.appendChild(card);
-    });
-}
-
-function acceptRequest(index, e) {
-    e.stopPropagation();
-    alert("Friend request accepted!");
-    fakeFriendsList.push(fakeRequestsList[index]);
-    fakeRequestsList.splice(index, 1);
-    renderRequests();
-    renderFriends();
-    if (currentLeaderboardTab === 'friends') renderLeaderboard('friends');
-}
-
-function declineRequest(index, e) {
-    e.stopPropagation();
-    fakeRequestsList.splice(index, 1);
-    renderRequests();
-}
-
-function toggleFriendView(view, btnElement) {
-    if (btnElement) {
-        document.querySelectorAll('.friend-tab-btn').forEach(btn => btn.classList.remove('active'));
-        btnElement.classList.add('active');
-    }
-    document.getElementById('friend-list-view').style.display = 'none';
-    document.getElementById('friend-add-view').style.display = 'none';
-    document.getElementById('friend-requests-view').style.display = 'none';
-
-    if (view === 'list') {
-        document.getElementById('friend-list-view').style.display = 'block';
-    } else if (view === 'add') {
-        document.getElementById('friend-add-view').style.display = 'block';
-    } else if (view === 'requests') {
-        document.getElementById('friend-requests-view').style.display = 'block';
-        renderRequests();
-    }
-}
-
-function openFriendModal(friend) {
-    let banner = document.getElementById('modal-friend-banner');
-    banner.style.background = friend.bannerBg;
-    banner.className = `profile-banner ${friend.bannerAnimClass || ''}`;
-
-    document.getElementById('modal-friend-avatar').innerHTML = friend.avatarHtml;
-    document.getElementById('modal-friend-avatar').style.background = friend.avatarBg;
-    document.getElementById('modal-friend-avatar').className = `avatar-large ${friend.animClass}`;
-    document.getElementById('modal-friend-name').innerText = friend.name;
-    document.getElementById('modal-friend-username').innerText = friend.username;
-    document.getElementById('modal-friend-co2').innerText = friend.co2;
-    document.getElementById('modal-friend-since').innerText = friend.since || "New Friend";
-    document.getElementById('modal-friend-bio').innerText = `"${friend.bio || "No bio yet."}"`;
-    document.getElementById('friend-profile-modal').classList.add('active');
-}
-
-function searchFriends() {
-    const container = document.getElementById('search-results-view');
-    container.innerHTML = '<div style="margin-bottom: 12px; font-weight: 600; color: #94a3b8; font-size: 13px;">Search Results</div>';
-    const randomNames = ["Vikram Singh", "Ananya Rao", "Suresh G", "Neha K", "Tarun J", "Divya Menon"];
-    const btnColor = document.body.classList.contains('light-theme') ? '#cbd5e1' : 'rgba(255,255,255,0.1)';
-
-    for (let i = 0; i < 3; i++) {
-        let name = randomNames[Math.floor(Math.random() * randomNames.length)] + " " + Math.floor(Math.random() * 100);
-        let username = "@" + name.split(' ')[0].toLowerCase() + Math.floor(Math.random() * 99);
-        let randCo2 = Math.floor(Math.random() * 3000) + 500;
-        let initials = name.split(' ').map(n => n[0]).join('');
-        let card = document.createElement('div');
-        card.className = 'friend-card';
-        card.innerHTML = `
-            <div style="display: flex; align-items: center;">
-                <div class="friend-avatar" style="background: ${btnColor}; color: inherit;">${initials}</div>
-                <div>
-                    <div style="font-weight: 600; font-family: 'Montserrat';">${name}</div>
-                    <div class="text-sm">${username}</div>
-                </div>
-            </div>
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <div style="color: #22c55e; font-weight: bold; font-size: 13px;"><i class="fa-solid fa-leaf"></i> ${randCo2}</div>
-                <button class="topup-btn" style="padding: 6px 12px; font-size: 12px; border-radius: 6px;" onclick="alert('Friend Request Sent!')"><i class="fa-solid fa-user-plus"></i></button>
-            </div>
-        `;
-        container.appendChild(card);
-    }
-}
-
-// --- DYNAMIC LEADERBOARD LOGIC ---
-function renderLeaderboard(type) {
-    currentLeaderboardTab = type;
-
-    document.querySelectorAll('.lb-btn').forEach(b => {
-        if (!b.classList.contains('impact-tab-btn') && !b.classList.contains('inv-tab-btn')) {
-            b.classList.remove('active');
-            if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(`('${type}')`)) {
-                b.classList.add('active');
-            }
-        }
-    });
-
-    let list = [];
-    let currentUser = {
-        name: "Vignesh Vicky", co2: Math.floor(co2Points), color: "#3b82f6", isMe: true,
-        bannerBg: currentUserBannerBg, bannerAnimClass: currentUserBannerAnimClass, avatarBg: currentUserAvatarBg, avatarHtml: currentUserAvatarHtml, animClass: currentUserAvatarAnimClass
-    };
-
-    if (type === 'friends') { list = [...fakeFriendsList, currentUser]; }
-    else { list = [...fakeAllUsersList, currentUser]; }
-    list.sort((a, b) => b.co2 - a.co2);
-
-    const container = document.getElementById('leaderboard-list');
-    container.innerHTML = '';
-    let userRendered = false;
-
-    for (let i = 0; i < list.length; i++) {
-        let user = list[i];
-        if (user.isMe) userRendered = true;
-        container.appendChild(createLeaderboardItem(user, i + 1));
-    }
-
-    if (!userRendered) {
-        let userRank = list.findIndex(u => u.isMe) + 1;
-        let divider = document.createElement('div');
-        divider.style = "text-align: center; color: #94a3b8; font-size: 14px; margin: -2px 0;";
-        divider.innerText = "•••";
-        container.appendChild(divider);
-        container.appendChild(createLeaderboardItem(currentUser, userRank));
-    }
-}
-
-function createLeaderboardItem(user, rank) {
-    let item = document.createElement('div');
-    item.className = `lb-item ${user.bannerAnimClass || ''} ${user.isMe ? 'is-me' : ''}`;
-
-    item.style.background = user.bannerBg || '#1e293b';
-    item.style.color = "white";
-
-    let avatarHtmlToUse = user.avatarHtml || user.name.split(' ').map(n => n[0]).join('');
-    let avatarBgToUse = user.avatarBg || '#1e293b';
-    let animClass = user.animClass || '';
-    let rankClass = rank === 1 ? 'top-1' : (rank === 2 ? 'top-2' : (rank === 3 ? 'top-3' : ''));
-
-    item.innerHTML = `
-        <div class="lb-rank ${rankClass}">${rank}</div>
-        <div class="lb-user-info">
-            <div class="lb-avatar ${animClass}" style="background: ${avatarBgToUse};">${avatarHtmlToUse}</div>
-            <div class="lb-name" style="text-shadow: 0 1px 4px rgba(0,0,0,0.9);">${user.name} ${user.isMe ? '<span style="color:#3b82f6;">(You)</span>' : ''}</div>
-        </div>
-        <div class="lb-pts" style="background: rgba(0,0,0,0.6); padding: 2px 6px; border-radius: 4px; color:#4ade80; border: 1px solid rgba(255,255,255,0.1);">${user.co2} Pts</div>
-    `;
-    return item;
-}
-
-function submitFeedback() {
-    let subj = document.getElementById('support-subject').value;
-    if (subj.trim() === "") return alert("Please enter a subject.");
-    document.getElementById('feedback-modal').classList.add('active');
-    setTimeout(() => {
-        document.getElementById('feedback-modal').classList.remove('active');
-        document.getElementById('support-subject').value = '';
-        document.getElementById('support-message').value = '';
-    }, 2500);
-}
-
-function initWallet() {
-    let bal = localStorage.getItem('wallet_balance');
-    if (!bal) { bal = 245.50; localStorage.setItem('wallet_balance', bal); }
-    document.getElementById('display-wallet-balance').innerText = '₹ ' + parseFloat(bal).toFixed(2);
-}
-
-function addFunds(amountObj = null) {
-    let amount = amountObj || parseFloat(document.getElementById('topup-amount').value);
-    if (amount > 0) {
-        let current = parseFloat(localStorage.getItem('wallet_balance')) || 0;
-        let newBal = current + amount;
-        localStorage.setItem('wallet_balance', newBal);
-        document.getElementById('display-wallet-balance').innerText = '₹ ' + newBal.toFixed(2);
-        if (!amountObj) {
-            document.getElementById('topup-amount').value = '';
-            let btn = document.querySelector('.topup-btn');
-            btn.innerHTML = '<i class="fa-solid fa-check"></i> Added!';
-            setTimeout(() => { btn.innerHTML = '<i class="fa-solid fa-plus"></i> Add Funds'; }, 2000);
-        }
-    }
-}
-initWallet();
-
+// ============================================================================
+// 7. REAL-TIME STATS, REWARDS & SCRATCH ENGINE
+// ============================================================================
 function getThreshold(level) {
     if (level === 1) return 1;
     if (level === 2) return 3;
@@ -523,54 +437,73 @@ function getThreshold(level) {
 }
 
 function updateAvatarRing() {
-    let thresh = getThreshold(currentLevel);
-    let percentage = (travelsInLevel / thresh) * 100;
-    let emptyColor = document.body.classList.contains('light-theme') ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)';
-    document.getElementById('avatar-ring').style.background = `conic-gradient(#007bff ${percentage}%, ${emptyColor} ${percentage}% 100%)`;
+    const ring = document.getElementById('avatar-ring');
+    if (!ring) return;
+    const thresh = getThreshold(currentLevel);
+    const percentage = (travelsInLevel / thresh) * 100;
+    const emptyColor = document.body.classList.contains('light-theme') ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)';
+    ring.style.background = `conic-gradient(#007bff ${percentage}%, ${emptyColor} ${percentage}% 100%)`;
 }
 
 function updateUI() {
-    let thresh = getThreshold(currentLevel);
-    document.getElementById('reward-level').innerText = currentLevel;
-    document.getElementById('reward-status').innerText = `Travel ${thresh - travelsInLevel} more times to reach Level ${currentLevel + 1}!`;
+    const thresh = getThreshold(currentLevel);
+    const lvlElem = document.getElementById('reward-level');
+    if (lvlElem) lvlElem.innerText = currentLevel;
 
-    document.getElementById('nav-co2').innerText = Math.floor(co2Points);
+    const statElem = document.getElementById('reward-status');
+    if (statElem) statElem.innerText = `Travel ${Math.max(0, thresh - travelsInLevel)} more times to reach Level ${currentLevel + 1}!`;
 
-    let kgSaved = (co2Points / 100).toFixed(1);
-    let profileCo2Elem = document.getElementById('profile-co2');
-    if (profileCo2Elem) profileCo2Elem.innerText = kgSaved + " kg";
-    let menuCo2Elem = document.getElementById('menu-co2');
-    if (menuCo2Elem) menuCo2Elem.innerText = kgSaved + " kg";
+    // Real dynamic calculation: 100 PTS = 1.0 KG CO₂
+    const navCo2 = document.getElementById('nav-co2');
+    if (navCo2) navCo2.innerText = Math.floor(co2Points);
 
-    let profileTravelPtsElem = document.getElementById('profile-travel-pts');
-    if (profileTravelPtsElem) profileTravelPtsElem.innerText = travelPoints + " Pts";
-    let menuTravelPtsElem = document.getElementById('menu-travel-pts');
-    if (menuTravelPtsElem) menuTravelPtsElem.innerText = travelPoints + " Pts";
+    const kgSaved = (co2Points / 100).toFixed(1);
+    const moneySavedVal = Math.round((co2Points / 100) * 65); // Realistic saved cab fare per kg
 
-    let profileMoneyElem = document.getElementById('profile-money-saved');
-    let menuMoneyElem = document.getElementById('menu-money');
-    if (profileMoneyElem && menuMoneyElem) menuMoneyElem.innerText = profileMoneyElem.innerText;
+    const profileCo2 = document.getElementById('profile-co2');
+    if (profileCo2) profileCo2.innerText = `${kgSaved} kg`;
 
-    let redeemElem = document.getElementById('redeem-travel-pts');
-    if (redeemElem) redeemElem.innerText = travelPoints.toLocaleString();
+    const menuCo2 = document.getElementById('menu-co2');
+    if (menuCo2) menuCo2.innerText = `${kgSaved} kg`;
 
-    let trees = (co2Points / 1000).toFixed(1);
-    let impactTextElem = document.getElementById('impact-trees-text');
-    if (impactTextElem) {
-        impactTextElem.innerHTML = `Your transit choices <b>${Math.floor(co2Points)} PTS = ${kgSaved} KG</b> the cooling effect of <b>${trees} trees</b>. (Minimum)`;
+    const profMoney = document.getElementById('profile-money-saved');
+    if (profMoney) profMoney.innerText = `₹${moneySavedVal.toLocaleString()}`;
+
+    const menuMoney = document.getElementById('menu-money');
+    if (menuMoney) menuMoney.innerText = `₹${moneySavedVal.toLocaleString()}`;
+
+    const thriftyMoney = document.getElementById('thrifty-savings-display');
+    if (thriftyMoney) thriftyMoney.innerText = `₹${moneySavedVal.toLocaleString()}`;
+
+    const profileTravelPts = document.getElementById('profile-travel-pts');
+    if (profileTravelPts) profileTravelPts.innerText = `${travelPoints} Pts`;
+
+    const menuTravelPts = document.getElementById('menu-travel-pts');
+    if (menuTravelPts) menuTravelPts.innerText = `${travelPoints} Pts`;
+
+    const redeemTravelPts = document.getElementById('redeem-travel-pts');
+    if (redeemTravelPts) redeemTravelPts.innerText = travelPoints.toLocaleString();
+
+    const impactText = document.getElementById('impact-trees-text');
+    if (impactText) {
+        const trees = (co2Points / 1000).toFixed(1);
+        impactText.innerHTML = `Your transit choices <b>${Math.floor(co2Points)} PTS = ${kgSaved} KG</b> have the cooling effect of <b>${trees} trees</b>. (Minimum)`;
     }
 
-    renderLeaderboard(currentLeaderboardTab);
     renderTracker();
     updateAvatarRing();
-    if (document.getElementById('section-rewards').classList.contains('active')) renderInventory();
+    if (document.getElementById('section-rewards')?.classList.contains('active')) {
+        renderInventory();
+    }
 }
 
 function renderTracker() {
-    let tracker = document.getElementById('reward-tracker-ui');
+    const tracker = document.getElementById('reward-tracker-ui');
+    if (!tracker) return;
+
     let html = '';
-    let totalNodes = 5;
-    let startLevel = Math.max(1, currentLevel - 2);
+    const totalNodes = 5;
+    const startLevel = Math.max(1, currentLevel - 2);
 
     for (let i = 0; i < totalNodes; i++) {
         let lvl = startLevel + i;
@@ -580,14 +513,14 @@ function renderTracker() {
     }
     tracker.innerHTML = `<div class="tracker-line"></div><div class="tracker-progress" id="tracker-progress-line"></div>` + html;
 
-    let progressLineElem = document.getElementById('tracker-progress-line');
+    const progressLineElem = document.getElementById('tracker-progress-line');
     if (progressLineElem) {
         let perc = ((currentLevel - startLevel) / (totalNodes - 1)) * 100;
         progressLineElem.style.width = `calc(${perc}% - 30px)`;
     }
 }
 
-function simulateTravel() {
+async function simulateTravel() {
     let thresh = getThreshold(currentLevel);
     travelsInLevel++;
     co2Points += 100;
@@ -597,52 +530,47 @@ function simulateTravel() {
         travelsInLevel = 0;
         travelPoints += 10;
 
-        document.getElementById('popup-level').innerText = currentLevel;
-        document.getElementById('levelup-modal').classList.add('active');
+        const popLvl = document.getElementById('popup-level');
+        if (popLvl) popLvl.innerText = currentLevel;
+
+        const lvlModal = document.getElementById('levelup-modal');
+        if (lvlModal) lvlModal.classList.add('active');
 
         setTimeout(() => {
-            document.getElementById('levelup-modal').classList.remove('active');
-
+            if (lvlModal) lvlModal.classList.remove('active');
             let rand = Math.random();
-            let rewardText = "";
-            if (rand < 0.05) { rewardText = "Free Daily Pass!"; }
-            else if (rand < 0.35) { rewardText = "+ 25 Travel Pts"; }
-            else {
-                let cashbacks = [1, 2, 5, 10, 20, 50];
-                let amt = cashbacks[Math.floor(Math.random() * cashbacks.length)];
-                rewardText = `₹${amt} Cashback`;
-            }
+            let rewardText = rand < 0.05 ? "Free Daily Pass!" : (rand < 0.35 ? "+ 25 Travel Pts" : "₹20 Cashback");
 
-            pendingRewardObj = { id: Date.now(), text: rewardText, dateGen: new Date().toLocaleDateString(), isActivated: false };
+            let pendingRewardObj = { id: Date.now(), text: rewardText, dateGen: new Date().toLocaleDateString(), isActivated: false };
             fullInventory.unscratched.push(pendingRewardObj);
-            saveData();
-
             pendingReward = rewardText;
             pendingCardIndex = fullInventory.unscratched.length - 1;
 
             openScratchCard(rewardText);
-        }, 3500);
+            updateUI();
+        }, 3000);
     } else {
-        saveData();
         updateUI();
     }
 }
 
 function redeemPass(type) {
-    if (type === 'daily' && travelPoints >= 1000) {
-        travelPoints -= 1000;
-        fullInventory.active.push({ id: Date.now(), text: "Daily Pass", expiry: getExpiryDate(1), isActivated: false });
-        alert("Success: Daily Pass Redeemed!");
-    } else if (type === 'monthly' && travelPoints >= 10000) {
-        travelPoints -= 10000;
-        fullInventory.active.push({ id: Date.now(), text: "Monthly Pass", expiry: getExpiryDate(30), isActivated: false });
-        alert("Success: Monthly Pass Redeemed!");
-    } else {
+    const required = type === 'daily' ? 1000 : 10000;
+    if (travelPoints < required) {
         alert("Not enough Travel Points. Keep traveling to earn more!");
         return;
     }
-    saveData();
+
+    travelPoints -= required;
+    fullInventory.active.push({ 
+        id: Date.now(), 
+        text: type === 'daily' ? "Daily Pass" : "Monthly Pass", 
+        expiry: getExpiryDate(type === 'daily' ? 1 : 30), 
+        isActivated: false 
+    });
+    alert(`Success: ${type.toUpperCase()} Pass Redeemed!`);
     updateUI();
+    renderInventory();
 }
 
 function getExpiryDate(daysToAdd) {
@@ -653,17 +581,18 @@ function getExpiryDate(daysToAdd) {
 
 function promptActivatePass(id) {
     passToActivate = id;
-    document.getElementById('pass-activation-modal').classList.add('active');
+    const modal = document.getElementById('pass-activation-modal');
+    if (modal) modal.classList.add('active');
 }
 
 function confirmActivatePass() {
     let pass = fullInventory.active.find(p => p.id === passToActivate);
     if (pass) {
         pass.isActivated = true;
-        saveData();
         renderInventory();
     }
-    document.getElementById('pass-activation-modal').classList.remove('active');
+    const modal = document.getElementById('pass-activation-modal');
+    if (modal) modal.classList.remove('active');
 }
 
 setInterval(() => {
@@ -684,14 +613,22 @@ setInterval(() => {
 }, 1000);
 
 function openScratchCard(rewardText) {
-    document.getElementById('scratch-prize-text').innerText = rewardText;
-    document.getElementById('pre-scratch-btns').style.display = 'flex';
-    document.getElementById('btn-claim-reward').style.display = 'none';
-    document.getElementById('scratch-modal').classList.add('active');
+    const prizeText = document.getElementById('scratch-prize-text');
+    if (prizeText) prizeText.innerText = rewardText;
+
+    const preScratch = document.getElementById('pre-scratch-btns');
+    if (preScratch) preScratch.style.display = 'flex';
+
+    const claimBtn = document.getElementById('btn-claim-reward');
+    if (claimBtn) claimBtn.style.display = 'none';
+
+    const scratchModal = document.getElementById('scratch-modal');
+    if (scratchModal) scratchModal.classList.add('active');
 
     const canvas = document.getElementById('scratch-canvas');
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    if (!canvas) return;
 
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
     canvas.width = 250;
     canvas.height = 150;
 
@@ -729,7 +666,6 @@ function openScratchCard(rewardText) {
         if (!isDrawing || isRevealed) return;
         scratch(e);
         scratchStrokes++;
-
         if (scratchStrokes > 40) {
             isRevealed = true;
             triggerScratchComplete(ctx, canvas);
@@ -744,31 +680,35 @@ function openScratchCard(rewardText) {
     canvas.ontouchstart = canvas.onmousedown;
     canvas.ontouchmove = trackScratch;
     canvas.ontouchend = () => isDrawing = false;
-
     canvas.style.pointerEvents = 'auto';
 }
 
 function triggerScratchComplete(ctx, canvas) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     canvas.style.pointerEvents = 'none';
-    document.getElementById('pre-scratch-btns').style.display = 'none';
-    document.getElementById('btn-claim-reward').style.display = 'block';
+    const preScratch = document.getElementById('pre-scratch-btns');
+    if (preScratch) preScratch.style.display = 'none';
+
+    const claimBtn = document.getElementById('btn-claim-reward');
+    if (claimBtn) claimBtn.style.display = 'block';
 }
 
 function autoScratch() {
     const canvas = document.getElementById('scratch-canvas');
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
     triggerScratchComplete(ctx, canvas);
 }
 
 function scratchLater() {
-    document.getElementById('scratch-modal').classList.remove('active');
+    const modal = document.getElementById('scratch-modal');
+    if (modal) modal.classList.remove('active');
     pendingReward = "";
     pendingCardIndex = -1;
     updateUI();
 }
 
-function claimReward() {
+async function claimReward() {
     if (pendingCardIndex === -1) return;
 
     let d = new Date().toLocaleDateString();
@@ -778,25 +718,23 @@ function claimReward() {
 
     if (rewardText.includes("Cashback")) {
         let match = rewardText.match(/\d+/);
-        if (match) addFunds(parseInt(match[0]));
+        if (match) await addFunds(parseInt(match[0]));
         fullInventory.scratched.unshift({ id: Date.now(), text: rewardText, claimDate: d });
-    }
-    else if (rewardText.includes("Travel Pts")) {
+    } else if (rewardText.includes("Travel Pts")) {
         travelPoints += 25;
         fullInventory.scratched.unshift({ id: Date.now(), text: rewardText, claimDate: d });
-    }
-    else if (rewardText.includes("Pass")) {
+    } else if (rewardText.includes("Pass")) {
         fullInventory.active.unshift({ id: Date.now(), text: rewardText, expiry: getExpiryDate(7), isActivated: false });
     }
 
     rewardHistory.unshift({ date: d, desc: rewardText });
-
     pendingReward = "";
     pendingCardIndex = -1;
 
-    saveData();
     updateUI();
-    document.getElementById('scratch-modal').classList.remove('active');
+
+    const modal = document.getElementById('scratch-modal');
+    if (modal) modal.classList.remove('active');
 
     if (rewardText.includes("Pass")) switchInvTab('active');
     else switchInvTab('scratched');
@@ -805,12 +743,14 @@ function claimReward() {
 function switchInvTab(tabName) {
     currentInvTab = tabName;
     document.querySelectorAll('.inv-tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById('btn-inv-' + tabName).classList.add('active');
+    const activeBtn = document.getElementById('btn-inv-' + tabName);
+    if (activeBtn) activeBtn.classList.add('active');
     renderInventory();
 }
 
 function renderInventory() {
     let grid = document.getElementById('inventory-grid');
+    if (!grid) return;
     grid.innerHTML = '';
     let dataList = fullInventory[currentInvTab] || [];
 
@@ -830,10 +770,9 @@ function renderInventory() {
                 pendingCardIndex = index;
                 openScratchCard(pendingReward);
             };
-        }
-        else if (currentInvTab === 'active') {
+        } else if (currentInvTab === 'active') {
             card.className = 'inv-active-card';
-            let isPass = item.text.includes("Pass");
+            let isPass = item.text && item.text.includes("Pass");
 
             if (isPass) {
                 if (item.isActivated) {
@@ -856,8 +795,7 @@ function renderInventory() {
                     <div style="font-size:10px; font-weight: 500; opacity: 0.8;">Expires: ${item.expiry}</div>
                 `;
             }
-        }
-        else if (currentInvTab === 'scratched') {
+        } else if (currentInvTab === 'scratched') {
             card.className = 'inv-scratched-card';
             card.innerHTML = `
                 <i class="fa-solid fa-circle-check" style="font-size: 20px; margin-bottom:5px; color:#22c55e;"></i>
@@ -871,6 +809,7 @@ function renderInventory() {
 
 function openHistoryModal() {
     let list = document.getElementById('history-list');
+    if (!list) return;
     list.innerHTML = '';
     if (rewardHistory.length === 0) {
         list.innerHTML = `<div style="text-align:center; color:#94a3b8; padding:20px;">No rewards claimed yet. Keep traveling!</div>`;
@@ -882,39 +821,208 @@ function openHistoryModal() {
             </div>`;
         });
     }
-    document.getElementById('history-modal').classList.add('active');
+    const modal = document.getElementById('history-modal');
+    if (modal) modal.classList.add('active');
 }
 
 function resetRewardsTesting() {
     if (confirm("Reset all reward progress?")) {
-        currentLevel = 1; travelsInLevel = 0; co2Points = 5200; travelPoints = 0;
+        currentLevel = 1; travelsInLevel = 0; co2Points = 0; travelPoints = 0;
         rewardHistory = [];
         fullInventory = { unscratched: [], active: [], scratched: [] };
-        localStorage.removeItem('wallet_balance');
-        initWallet(); saveData(); updateUI();
+        updateUI();
     }
 }
 
-function saveData() {
-    localStorage.setItem('reward_level', currentLevel);
-    localStorage.setItem('reward_travels', travelsInLevel);
-    localStorage.setItem('co2_points', co2Points);
-    localStorage.setItem('travel_points', travelPoints);
-    localStorage.setItem('reward_history', JSON.stringify(rewardHistory));
-    localStorage.setItem('rta_inventory', JSON.stringify(fullInventory));
+// ============================================================================
+// 8. REAL MONGODB LEADERBOARD
+// ============================================================================
+async function renderLeaderboard(type) {
+    currentLeaderboardTab = type;
+    document.querySelectorAll('.lb-btn').forEach(b => {
+        if (!b.classList.contains('impact-tab-btn') && !b.classList.contains('inv-tab-btn')) {
+            b.classList.remove('active');
+            if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(`('${type}')`)) {
+                b.classList.add('active');
+            }
+        }
+    });
+
+    const container = document.getElementById('leaderboard-list');
+    if (!container) return;
+    container.innerHTML = '';
+
+    let list = [];
+    try {
+        const res = await apiRequest("/transit/leaderboard", "GET");
+        if (res && res.ok) {
+            list = await res.json();
+        }
+    } catch (e) {}
+
+    if (list.length === 0) {
+        let currentEntry = {
+            name: currentUser?.name || "Commuter", 
+            co2_points: Math.floor(co2Points), 
+            isMe: true,
+            banner: { bg: currentUserBannerBg, anim: currentUserBannerAnimClass },
+            avatar: { bg: currentUserAvatarBg, html: currentUserAvatarHtml, anim: currentUserAvatarAnimClass }
+        };
+        list = [currentEntry];
+    }
+
+    list.forEach((u, idx) => {
+        const item = document.createElement('div');
+        const isMe = u.isMe || (currentUser && u.username === currentUser.username);
+        item.className = `lb-item ${u.banner?.anim || ''} ${isMe ? 'is-me' : ''}`;
+        item.style.background = u.banner?.bg || '#1e3a8a';
+
+        let avatarHtmlToUse = u.avatar?.html || u.name.slice(0, 2).toUpperCase();
+        let avatarBgToUse = u.avatar?.bg || '#007bff';
+        let animClass = u.avatar?.anim || '';
+        let rankClass = idx === 0 ? 'top-1' : (idx === 1 ? 'top-2' : (idx === 2 ? 'top-3' : ''));
+
+        item.innerHTML = `
+            <div class="lb-rank ${rankClass}">${idx + 1}</div>
+            <div class="lb-user-info">
+                <div class="lb-avatar ${animClass}" style="background: ${avatarBgToUse};">${avatarHtmlToUse}</div>
+                <div class="lb-name" style="text-shadow: 0 1px 4px rgba(0,0,0,0.9);">${u.name} ${isMe ? '<span style="color:#3b82f6;">(You)</span>' : ''}</div>
+            </div>
+            <div class="lb-pts" style="background: rgba(0,0,0,0.6); padding: 2px 6px; border-radius: 4px; color:#4ade80; border: 1px solid rgba(255,255,255,0.1);">${Math.floor(u.co2_points || 0)} Pts</div>
+        `;
+        container.appendChild(item);
+    });
 }
 
-// --- CALENDAR LOGIC ---
+// ============================================================================
+// 9. FRIENDS LIST
+// ============================================================================
+function renderFriends() {
+    const container = document.getElementById('friend-list-view');
+    if (!container) return;
+    container.innerHTML = '';
+    fakeFriendsList.forEach(friend => {
+        let card = document.createElement('div');
+        card.className = `friend-card ${friend.bannerAnimClass || ''}`;
+        card.style.background = friend.bannerBg;
+
+        card.innerHTML = `
+            <div style="display: flex; align-items: center; width: 100%;">
+                <div class="friend-avatar ${friend.animClass}" style="background: ${friend.avatarBg}">${friend.avatarHtml}</div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 600; font-family: 'Montserrat'; color: white; text-shadow: 0 1px 4px rgba(0,0,0,0.9);">${friend.name}</div>
+                    <div class="text-sm" style="color: white; text-shadow: 0 1px 4px rgba(0,0,0,0.9);">${friend.username}</div>
+                </div>
+                <div style="color: #4ade80; font-weight: bold; font-size: 14px; background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);">
+                    <i class="fa-solid fa-leaf"></i> ${friend.co2} Pts
+                </div>
+            </div>
+        `;
+        card.onclick = () => openFriendModal(friend);
+        container.appendChild(card);
+    });
+}
+
+function renderRequests() {
+    const container = document.getElementById('friend-requests-view');
+    if (!container) return;
+    container.innerHTML = '<div class="text-sm" style="text-align:center; padding: 20px;">No pending requests.</div>';
+    const reqCount = document.getElementById('req-count');
+    if (reqCount) reqCount.innerText = "0";
+}
+
+function toggleFriendView(view, btnElement) {
+    if (btnElement) {
+        document.querySelectorAll('.friend-tab-btn').forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+    }
+    const listV = document.getElementById('friend-list-view');
+    const addV = document.getElementById('friend-add-view');
+    const reqV = document.getElementById('friend-requests-view');
+
+    if (listV) listV.style.display = 'none';
+    if (addV) addV.style.display = 'none';
+    if (reqV) reqV.style.display = 'none';
+
+    if (view === 'list' && listV) listV.style.display = 'block';
+    if (view === 'add' && addV) addV.style.display = 'block';
+    if (view === 'requests' && reqV) {
+        reqV.style.display = 'block';
+        renderRequests();
+    }
+}
+
+function openFriendModal(friend) {
+    let banner = document.getElementById('modal-friend-banner');
+    if (banner) {
+        banner.style.background = friend.bannerBg;
+        banner.className = `profile-banner ${friend.bannerAnimClass || ''}`;
+    }
+
+    const av = document.getElementById('modal-friend-avatar');
+    if (av) {
+        av.innerHTML = friend.avatarHtml;
+        av.style.background = friend.avatarBg;
+        av.className = `avatar-large ${friend.animClass || ''}`;
+    }
+
+    const name = document.getElementById('modal-friend-name');
+    if (name) name.innerText = friend.name;
+
+    const user = document.getElementById('modal-friend-username');
+    if (user) user.innerText = friend.username;
+
+    const co2 = document.getElementById('modal-friend-co2');
+    if (co2) co2.innerText = friend.co2;
+
+    const since = document.getElementById('modal-friend-since');
+    if (since) since.innerText = friend.since || "New Friend";
+
+    const bio = document.getElementById('modal-friend-bio');
+    if (bio) bio.innerText = `"${friend.bio || "No bio yet."}"`;
+
+    const modal = document.getElementById('friend-profile-modal');
+    if (modal) modal.classList.add('active');
+}
+
+function searchFriends() {
+    const container = document.getElementById('search-results-view');
+    if (!container) return;
+    container.innerHTML = '<div style="margin-bottom: 12px; font-weight: 600; color: #94a3b8; font-size: 13px;">Search Results</div>';
+    const randomNames = ["Vikram Singh", "Ananya Rao", "Suresh G"];
+    const btnColor = document.body.classList.contains('light-theme') ? '#cbd5e1' : 'rgba(255,255,255,0.1)';
+
+    for (let i = 0; i < randomNames.length; i++) {
+        let name = randomNames[i];
+        let username = "@" + name.split(' ')[0].toLowerCase();
+        let initials = name.split(' ').map(n => n[0]).join('');
+        let card = document.createElement('div');
+        card.className = 'friend-card';
+        card.innerHTML = `
+            <div style="display: flex; align-items: center;">
+                <div class="friend-avatar" style="background: ${btnColor}; color: inherit;">${initials}</div>
+                <div>
+                    <div style="font-weight: 600; font-family: 'Montserrat';">${name}</div>
+                    <div class="text-sm">${username}</div>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div style="color: #22c55e; font-weight: bold; font-size: 13px;"><i class="fa-solid fa-leaf"></i> 4,100</div>
+                <button class="topup-btn" style="padding: 6px 12px; font-size: 12px; border-radius: 6px;" onclick="alert('Friend Request Sent!')"><i class="fa-solid fa-user-plus"></i></button>
+            </div>
+        `;
+        container.appendChild(card);
+    }
+}
+
+// ============================================================================
+// 10. CALENDAR ENGINE
+// ============================================================================
 let calDate = new Date();
 const todayReal = new Date();
 todayReal.setHours(0, 0, 0, 0);
 
-const travelTypes = [
-    'c-metro-purple', 'c-metro-green', 'c-metro-yellow', 'c-metro-pink', 'c-metro-blue',
-    'c-bus-bmtc', 'c-bus-ksrtc',
-    'c-kride-sampige', 'c-kride-mallige', 'c-kride-parijata', 'c-kride-kanaka',
-    'empty', 'empty', 'empty'
-];
+const travelTypes = ['c-metro-purple', 'c-metro-green', 'c-bus-bmtc', 'empty'];
 
 function getFakeTravelType(dateString) {
     let hash = 0;
@@ -924,29 +1032,16 @@ function getFakeTravelType(dateString) {
 
 function getFakeDetailsHtml(type, dateStr) {
     if (type === 'empty') return `<div style="text-align:center; color:#94a3b8;"><i class="fa-solid fa-house-chimney" style="font-size:20px; margin-bottom:10px;"></i><br>No travel on ${dateStr}.</div>`;
-
-    let html = `<b><i class="fa-regular fa-calendar"></i> ${dateStr}</b><br><div style="margin-top:10px; font-size:13px; display:flex; flex-direction:column; gap:8px;">`;
-
-    if (type === 'c-metro-purple') html += `<div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;"><span><i class="fa-solid fa-train-subway" style="color:#8b5cf6;"></i> Purple Line (Whitefield to MG Road)</span> <b>₹45</b></div>`;
-    else if (type === 'c-metro-green') html += `<div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;"><span><i class="fa-solid fa-train-subway" style="color:#22c55e;"></i> Green Line (Peenya to Majestic)</span> <b>₹30</b></div>`;
-    else if (type === 'c-metro-yellow') html += `<div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;"><span><i class="fa-solid fa-train-subway" style="color:#eab308;"></i> Yellow Line (RV Road to Silk Board)</span> <b>₹25</b></div>`;
-    else if (type === 'c-metro-pink') html += `<div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;"><span><i class="fa-solid fa-train-subway" style="color:#ec4899;"></i> Pink Line (Nagawara to MG Road)</span> <b>₹35</b></div>`;
-    else if (type === 'c-metro-blue') html += `<div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;"><span><i class="fa-solid fa-train-subway" style="color:#3b82f6;"></i> Blue Line (Silk Board to KR Puram)</span> <b>₹40</b></div>`;
-    else if (type === 'c-bus-bmtc') html += `<div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;"><span><i class="fa-solid fa-bus" style="color:#0ea5e9;"></i> BMTC City Bus (Route 335-E)</span> <b>₹25</b></div>`;
-    else if (type === 'c-bus-ksrtc') html += `<div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;"><span><i class="fa-solid fa-bus-simple" style="color:#ef4444;"></i> KSRTC Intercity (Majestic to Mysuru)</span> <b>₹160</b></div>`;
-    else if (type === 'c-kride-sampige') html += `<div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;"><span><i class="fa-solid fa-train" style="color:#dc2626;"></i> K-Ride Sampige (Majestic to Yelahanka)</span> <b>₹20</b></div>`;
-    else if (type === 'c-kride-mallige') html += `<div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;"><span><i class="fa-solid fa-train" style="color:#db2777;"></i> K-Ride Mallige (Hebbal to Yeshwanthpur)</span> <b>₹15</b></div>`;
-    else if (type === 'c-kride-parijata') html += `<div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;"><span><i class="fa-solid fa-train" style="color:#06b6d4;"></i> K-Ride Parijata (Kengeri to Whitefield)</span> <b>₹35</b></div>`;
-    else if (type === 'c-kride-kanaka') html += `<div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;"><span><i class="fa-solid fa-train" style="color:#d97706;"></i> K-Ride Kanaka (Carmelaram to Rajanukunte)</span> <b>₹30</b></div>`;
-
-    html += `<div style="text-align:right; color:#22c55e; margin-top:5px; font-weight:bold;">+ 12 CO₂ Pts</div></div>`;
-    return html;
+    return `<b><i class="fa-regular fa-calendar"></i> ${dateStr}</b><br><div style="margin-top:10px; font-size:13px;"><div style="display:flex; justify-content:space-between;"><span><i class="fa-solid fa-train-subway" style="color:#8b5cf6;"></i> Namma Metro Trip</span> <b>₹35</b></div><div style="text-align:right; color:#22c55e; margin-top:5px; font-weight:bold;">+ 12 CO₂ Pts</div></div>`;
 }
 
 function renderCalendar() {
     const grid = document.getElementById('calendar-grid');
+    if (!grid) return;
+
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    document.getElementById('calendar-month-year').innerText = `${monthNames[calDate.getMonth()]} ${calDate.getFullYear()}`;
+    const monthYear = document.getElementById('calendar-month-year');
+    if (monthYear) monthYear.innerText = `${monthNames[calDate.getMonth()]} ${calDate.getFullYear()}`;
 
     grid.innerHTML = `<div class="cal-day-name">Sun</div><div class="cal-day-name">Mon</div><div class="cal-day-name">Tue</div><div class="cal-day-name">Wed</div><div class="cal-day-name">Thu</div><div class="cal-day-name">Fri</div><div class="cal-day-name">Sat</div>`;
 
@@ -962,7 +1057,7 @@ function renderCalendar() {
         let checkDate = new Date(calDate.getFullYear(), calDate.getMonth(), i);
         let dateStr = checkDate.toDateString();
 
-        if (checkDate >= new Date(2025, 0, 1) && checkDate.getTime() <= todayReal.getTime()) {
+        if (checkDate.getTime() <= todayReal.getTime()) {
             let type = getFakeTravelType(dateStr);
             if (type !== 'empty') cell.classList.add(type);
             if (checkDate.getTime() === todayReal.getTime()) cell.classList.add('today');
@@ -970,7 +1065,8 @@ function renderCalendar() {
             cell.addEventListener('click', () => {
                 document.querySelectorAll('.cal-cell').forEach(c => c.classList.remove('selected'));
                 cell.classList.add('selected');
-                document.getElementById('travel-details-box').innerHTML = getFakeDetailsHtml(type, dateStr);
+                const box = document.getElementById('travel-details-box');
+                if (box) box.innerHTML = getFakeDetailsHtml(type, dateStr);
             });
         } else {
             cell.classList.add('empty');
@@ -984,124 +1080,123 @@ function changeMonth(dir) {
     let newYear = calDate.getFullYear();
     if (newMonth < 0) { newMonth = 11; newYear--; }
     if (newMonth > 11) { newMonth = 0; newYear++; }
-    if (newYear < 2025 || (newYear === todayReal.getFullYear() && newMonth > todayReal.getMonth())) return;
-    calDate.setMonth(newMonth); calDate.setFullYear(newYear);
+
+    calDate.setMonth(newMonth);
+    calDate.setFullYear(newYear);
     renderCalendar();
-    document.getElementById('travel-details-box').innerHTML = `<div style="text-align: center; color: #94a3b8;"><i class="fa-solid fa-hand-pointer" style="font-size: 24px; margin-bottom: 10px;"></i><br>Click a date to view travel details.</div>`;
 }
 
-renderCalendar();
-renderFriends();
-renderRequests();
-renderLeaderboard('friends');
-updateUI();
+// ============================================================================
+// 11. FEEDBACK & THEME TOGGLE
+// ============================================================================
+async function submitFeedback() {
+    const subjElem = document.getElementById('support-subject');
+    const msgElem = document.getElementById('support-message');
+    const subject = subjElem?.value.trim();
+    const message = msgElem?.value.trim();
 
-// --- ANIMATED LIVE ADVISORY LOGIC ---
+    if (!subject || !message) return alert("Please fill out both subject and message.");
+
+    try {
+        await apiRequest("/support/feedback", "POST", { subject, message });
+    } catch (e) {}
+
+    const modal = document.getElementById('feedback-modal');
+    if (modal) modal.classList.add('active');
+    setTimeout(() => {
+        if (modal) modal.classList.remove('active');
+        if (subjElem) subjElem.value = '';
+        if (msgElem) msgElem.value = '';
+    }, 2500);
+}
+
+// Theme Toggle with Mongo Persistence
+const themeBtn = document.getElementById('theme-toggle');
+if (themeBtn) {
+    const themeIcon = themeBtn.querySelector('i');
+    themeBtn.addEventListener('click', async () => {
+        let newTheme = "light-theme";
+        if (document.body.classList.contains('light-theme')) {
+            document.body.classList.replace('light-theme', 'dark-theme');
+            if (themeIcon) themeIcon.classList.replace('fa-moon', 'fa-sun');
+            newTheme = "dark-theme";
+        } else {
+            document.body.classList.replace('dark-theme', 'light-theme');
+            if (themeIcon) themeIcon.classList.replace('fa-sun', 'fa-moon');
+            newTheme = "light-theme";
+        }
+
+        try {
+            await apiRequest("/user/customize", "PUT", { theme: newTheme });
+        } catch (e) {}
+    });
+}
+
+// Logout Handlers
+document.querySelectorAll('.btn-logout').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        try {
+            await apiRequest("/logout", "POST");
+        } catch (err) {}
+        localStorage.removeItem("user_email");
+        localStorage.removeItem("bmrta_token");
+        window.location.href = 'login.html';
+    });
+});
+
+// Live Advisory Rotation
 const liveAdvisories = [
     { icon: '<i class="fa-solid fa-cloud-bolt" style="color: #f59e0b;"></i>', temp: "26°C", cond: "Scattered Storms", alert: "<b>Alert:</b> Heavy rain at 5 PM. Metro recommended over buses." },
     { icon: '<i class="fa-solid fa-sun" style="color: #eab308;"></i>', temp: "31°C", cond: "Sunny", alert: "<b>Update:</b> Clear routes on Outer Ring Road. Normal bus operations." },
     { icon: '<i class="fa-solid fa-smog" style="color: #94a3b8;"></i>', temp: "22°C", cond: "Morning Mist", alert: "<b>Tip:</b> Low visibility near airport. Suburban rail is on time." },
     { icon: '<i class="fa-solid fa-droplet" style="color: #3b82f6;"></i>', temp: "24°C", cond: "Light Rain", alert: "<b>Alert:</b> Purple line experiencing slight delays due to signal issues." },
-    { icon: '<i class="fa-solid fa-wind" style="color: #cbd5e1;"></i>', temp: "25°C", cond: "Breezy", alert: "<b>Update:</b> Excellent weather for cycling to your nearest metro station." },
-    { icon: '<i class="fa-solid fa-temperature-arrow-up" style="color: #ef4444;"></i>', temp: "34°C", cond: "Hot", alert: "<b>Alert:</b> High temperatures. All AC BMTC Vajra buses running at full capacity." },
-    { icon: '<i class="fa-solid fa-cloud" style="color: #94a3b8;"></i>', temp: "28°C", cond: "Cloudy", alert: "<b>Update:</b> Green line operations are completely normal." },
-    { icon: '<i class="fa-solid fa-cloud-showers-heavy" style="color: #3b82f6;"></i>', temp: "23°C", cond: "Heavy Rain", alert: "<b>Alert:</b> Waterlogging at Silk Board. Avoid road travel; use Metro." },
-    { icon: '<i class="fa-solid fa-snowflake" style="color: #06b6d4;"></i>', temp: "19°C", cond: "Cool Night", alert: "<b>Tip:</b> Last metro departs Majestic at 11:30 PM." },
-    { icon: '<i class="fa-solid fa-bolt" style="color: #eab308;"></i>', temp: "25°C", cond: "Thunderstorms", alert: "<b>Alert:</b> K-Ride services delayed by 15 mins due to weather." }
+    { icon: '<i class="fa-solid fa-wind" style="color: #cbd5e1;"></i>', temp: "25°C", cond: "Breezy", alert: "<b>Update:</b> Excellent weather for cycling to your nearest metro station." }
 ];
 
-const advisoryContainer = document.getElementById('advisory-container');
 let currentAdvisoryIndex = 0;
+function initAdvisories() {
+    const advisoryContainer = document.getElementById('advisory-container');
+    if (!advisoryContainer) return;
+    advisoryContainer.innerHTML = '';
 
-liveAdvisories.forEach((adv, idx) => {
-    let div = document.createElement('div');
-    div.className = `advisory-slide ${idx === 0 ? 'active' : ''}`;
-    div.innerHTML = `
-        <div style="font-size: 28px; width: 40px; text-align: center;">${adv.icon}</div>
-        <div>
-            <div style="font-weight: 700; font-size: 16px;">${adv.temp} <span style="font-size:12px; font-weight:500; color:#94a3b8; font-family:'Inter';">${adv.cond}</span></div>
-            <div class="text-sm" style="color:#ef4444; margin-top:2px;">${adv.alert}</div>
-        </div>
-    `;
-    advisoryContainer.appendChild(div);
-});
+    liveAdvisories.forEach((adv, idx) => {
+        let div = document.createElement('div');
+        div.className = `advisory-slide ${idx === 0 ? 'active' : ''}`;
+        div.innerHTML = `
+            <div style="font-size: 28px; width: 40px; text-align: center;">${adv.icon}</div>
+            <div>
+                <div style="font-weight: 700; font-size: 16px;">${adv.temp} <span style="font-size:12px; font-weight:500; color:#94a3b8; font-family:'Inter';">${adv.cond}</span></div>
+                <div class="text-sm" style="color:#ef4444; margin-top:2px;">${adv.alert}</div>
+            </div>
+        `;
+        advisoryContainer.appendChild(div);
+    });
 
-function startAdvisoryProgress() {
-    let fill = document.getElementById('advisory-progress-fill');
-    fill.style.transition = 'none';
-    fill.style.width = '0%';
-    void fill.offsetWidth;
-    fill.style.transition = 'width 25s linear';
-    fill.style.width = '100%';
+    const fill = document.getElementById('advisory-progress-fill');
+    if (fill) fill.style.width = '100%';
 }
 
-startAdvisoryProgress();
-
-setInterval(() => {
-    let slides = document.querySelectorAll('.advisory-slide');
-    slides[currentAdvisoryIndex].classList.remove('active');
-
-    currentAdvisoryIndex = (currentAdvisoryIndex + 1) % liveAdvisories.length;
-    slides[currentAdvisoryIndex].classList.add('active');
-
-    startAdvisoryProgress();
-}, 25000);
-
-// --- ANIMATED TIPS LOGIC ---
+// Transit Tips Rotation
 const transitTips = [
     "Buying a <b>Monthly Pass</b> saves an average commuter ₹450 and reduces ticket queue time by 2.5 hours per month!",
     "Riding <b>Namma Metro</b> reduces your carbon footprint by up to 75% compared to driving a private car.",
     "The <b>NCMC</b> card can be used seamlessly across Metro, BMTC buses, and even retail shopping.",
     "BMTC operates one of the largest fleets of <b>Electric Buses</b> in India, saving tons of CO₂ daily.",
-    "<b>K-Ride (Suburban Rail)</b> will soon connect the city's outskirts with 4 dedicated corridors.",
-    "A single full <b>Metro train</b> can carry up to 1,000 passengers, removing roughly 800 cars from roads!",
-    "You can carry your <b>bicycle</b> on Namma Metro during non-peak hours to solve last-mile connectivity.",
-    "<b>Travel Points</b> earned on the RTA app can be redeemed directly for free Daily or Monthly passes.",
-    "Standing on the <b>left side</b> of the metro escalator allows passengers in a hurry to walk on the right.",
-    "BMTC’s <b>Vayu Vajra</b> (Airport buses) operate 24/7, providing safe and cost-effective travel to KIAL.",
-    "Switching off your vehicle engine at traffic signals of 60+ seconds saves fuel and reduces pollution.",
-    "The <b>Purple Line</b> is the first underground metro line in South India, stretching 4.8 km under the city center.",
-    "Always let passengers <b>exit the train first</b> before boarding. It makes the boarding process much faster!",
-    "Purchasing <b>QR Tickets</b> on your phone completely eliminates paper waste and saves you from standing in lines.",
-    "The upcoming <b>Yellow Line</b> will feature driverless train technology (CBTC), a first for Namma Metro!",
-    "<b>Carpooling</b> to a metro station with your neighbors can cut your daily commute costs by another 30%.",
-    "Priority seating on buses and metros is strictly reserved for the elderly, pregnant women, and differently-abled.",
-    "Using the <b>Smart Wallet</b> for your daily transit gives you a flat 5% discount on all Namma Metro fares.",
-    "The upcoming <b>Blue Line</b> will directly connect Central Silk Board to Kempegowda International Airport.",
-    "Public transport is historically up to <b>10 times safer</b> per mile than traveling in a personal two-wheeler."
+    "A single full <b>Metro train</b> can carry up to 1,000 passengers, removing roughly 800 cars from roads!"
 ];
 
-const tipDisplay = document.getElementById('tip-text-display');
 let currentTipIndex = 0;
-
-tipDisplay.innerHTML = transitTips[0];
-
-function startTipProgress() {
-    let fill = document.getElementById('tip-progress-fill');
-    fill.style.transition = 'none';
-    fill.style.width = '0%';
-    void fill.offsetWidth;
-    fill.style.transition = 'width 10s linear';
-    fill.style.width = '100%';
+function initTips() {
+    const tipDisplay = document.getElementById('tip-text-display');
+    if (!tipDisplay) return;
+    tipDisplay.innerHTML = transitTips[0];
 }
 
-startTipProgress();
-
-setInterval(() => {
-    tipDisplay.classList.add('fade-out');
-    setTimeout(() => {
-        currentTipIndex = (currentTipIndex + 1) % transitTips.length;
-        tipDisplay.innerHTML = transitTips[currentTipIndex];
-        tipDisplay.classList.remove('fade-out');
-        startTipProgress();
-    }, 500);
-}, 10000);
-
-// --- DYNAMIC HASH & ROUTE INITIALIZATION ---
+// Tab Initializer
 function initActiveTab() {
     const hash = window.location.hash.replace('#', '').trim();
     const validTabs = ['status', 'travel', 'personal', 'wallet', 'rewards', 'friends', 'transit', 'support'];
-    
     if (hash && validTabs.includes(hash)) {
         switchTab(hash);
     } else if (window.innerWidth <= 768) {
@@ -1111,6 +1206,15 @@ function initActiveTab() {
     }
 }
 
-window.addEventListener('DOMContentLoaded', initActiveTab);
+// Bootstrapping
+window.addEventListener('DOMContentLoaded', () => {
+    syncProfileFromDatabase();
+    initAdvisories();
+    initTips();
+    renderCalendar();
+    renderFriends();
+    renderRequests();
+    initActiveTab();
+});
+
 window.addEventListener('hashchange', initActiveTab);
-initActiveTab();

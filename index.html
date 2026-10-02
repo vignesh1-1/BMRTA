@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Live Transit Dashboard | BMRTA</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -45,7 +45,7 @@
         .nav-safety-btn.report:hover { background: #f59e0b; color: white !important; }
         .nav-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.2); margin-left: 15px; }
 
-        .btn-logout { padding: 8px 20px; border-radius: 6px; background: rgba(255, 59, 48, 0.1); color: #ff3b30 !important; border: 1px solid rgba(255, 59, 48, 0.3); margin-left: 15px; text-decoration: none; display: inline-block; font-weight: 600;}
+        .btn-logout { padding: 8px 20px; border-radius: 6px; background: rgba(255, 59, 48, 0.1); color: #ff3b30 !important; border: 1px solid rgba(255, 59, 48, 0.3); margin-left: 15px; text-decoration: none; display: inline-block; font-weight: 600; cursor: pointer; }
         .btn-logout:hover { background: #ff3b30; color: #fff !important; }
 
         .btn-theme-toggle { background: transparent; border: 1px solid rgba(0, 123, 255, 0.4); color: #e0e0e0; padding: 8px 12px; border-radius: 6px; cursor: pointer; margin-left: 15px; transition: all 0.3s ease; }
@@ -53,7 +53,7 @@
 
         .green-miles-badge { background: #dcfce7; border: 2px solid #22c55e; color: #16a34a; padding: 6px 16px; border-radius: 50px; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; margin-left: 15px; cursor: help; transition: 0.3s; box-shadow: 0 2px 6px rgba(34, 197, 94, 0.2); white-space: nowrap; }
 
-        /* --- PROFILE.HTML IDENTICAL MOBILE MENU STYLES --- */
+        /* --- MOBILE MENU STYLES --- */
         .mobile-menu-toggle {
             display: none;
             background: transparent;
@@ -169,7 +169,7 @@
             width: 100%;
         }
 
-        /* --- LIGHT THEME MATCHING PROFILE.HTML --- */
+        /* --- LIGHT THEME STYLES --- */
         body.light-theme { background-color: #f0f4f8; background-image: none; color: #1e293b; }
         body.light-theme .navbar { background-color: #ffffff; border-bottom: 1px solid rgba(0, 123, 255, 0.2); }
         body.light-theme .brand-text { color: #0f172a; }
@@ -290,7 +290,6 @@
             body { overflow-y: auto; }
         }
 
-        /* --- MOBILE LAYOUT & REORDERING (ZERO BLUR) --- */
         @media (max-width: 1100px) {
             .nav-links a:not(.btn-logout):not(#theme-toggle) { display: none; }
             .nav-safety-btn { display: none !important; }
@@ -304,7 +303,6 @@
             .btn-logout { padding: 6px 12px; font-size: 12px; margin-left: 8px; }
             .btn-theme-toggle { padding: 6px 10px; margin-left: 8px; }
             
-            /* Reveal Mobile Menu Button */
             .mobile-menu-toggle { display: inline-flex; }
 
             .dashboard-wrapper { 
@@ -317,7 +315,6 @@
                 overflow-y: auto;
             }
             
-            /* Dissolve column containers so all direct dashboard cards can be ordered */
             .main-content,
             .right-panel,
             .right-col-left, 
@@ -325,13 +322,11 @@
                 display: contents; 
             }
             
-            /* Mobile Card Hierarchy: Smart Wallet -> Route Info -> Live Frequency -> Map */
             .card-wallet { order: 1; }
             .card-route { order: 2; flex: none; }
             .card-frequency { order: 3; }
             .map-section { order: 4; height: 360px; min-height: 360px; width: 100%; }
 
-            /* Hidden elements in mobile mode */
             .card-profile,
             .card-lastmile { 
                 display: none !important; 
@@ -352,11 +347,11 @@
     <nav class="navbar">
         <div style="display: flex; align-items: center;">
             <a href="index.html" class="brand">
-                <img src="ChatGPT_Image_Jun_7__2026__02_57_26_PM-removebg-preview (1).png" alt="RTA Logo" class="nav-logo">
+                <img src="ChatGPT_Image_Jun_7__2026__02_57_26_PM-removebg-preview (1).png" alt="RTA Logo" class="nav-logo" onerror="this.style.display='none'">
                 <div class="brand-text">BMRTA<span></span></div>
             </a>
             <div class="green-miles-badge" title="Carbon Points System">
-                <i class="fa-solid fa-leaf"></i> <span id="nav-co2">5200</span> Pts
+                <i class="fa-solid fa-leaf"></i> <span id="nav-co2">0</span> Pts
             </div>
         </div>
         <div class="nav-links">
@@ -366,17 +361,15 @@
             <div class="nav-divider"></div>
 
             <a href="profile.html">Admin Profile</a>
-            <a href="#" onclick="alert('Redirecting to Settings...')">Settings</a>
+            <a href="profile.html#settings" onclick="window.location.href='profile.html'">Settings</a>
             <button id="theme-toggle" class="btn-theme-toggle" aria-label="Toggle Theme"><i class="fa-solid fa-moon"></i></button>
-            <a href="index.html" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            <button class="btn-logout" id="btn-dashboard-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
 
-            <!-- Mobile Hamburger Menu Button -->
             <button id="mobile-menu-toggle" class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle navigation">
                 <i class="fa-solid fa-bars"></i>
             </button>
         </div>
 
-        <!-- Mobile Navigation Drawer Matching profile.html (No Background Blur) -->
         <div id="mobile-nav-menu" class="mobile-nav-menu">
             <a href="index.html" class="mobile-menu-item dashboard-item active">
                 <i class="fa-solid fa-gauge-high" style="color: #38bdf8;"></i> Live Dashboard
@@ -420,14 +413,14 @@
                 <div class="menu-stat-card c-green">
                     <i class="fa-solid fa-cloud-arrow-down"></i>
                     <div>
-                        <div class="menu-stat-val" id="menu-co2">52.0 kg</div>
+                        <div class="menu-stat-val" id="menu-co2">0.0 kg</div>
                         <div class="menu-stat-lbl">CO₂ Emissions Saved</div>
                     </div>
                 </div>
                 <div class="menu-stat-card c-orange">
                     <i class="fa-solid fa-piggy-bank"></i>
                     <div>
-                        <div class="menu-stat-val" id="menu-money">₹3,450</div>
+                        <div class="menu-stat-val" id="menu-money">₹0</div>
                         <div class="menu-stat-lbl">Saved vs Driving</div>
                     </div>
                 </div>
@@ -513,7 +506,9 @@
                             <div class="text-sm" style="margin-bottom: 10px;"><b>Top Priority Routes</b></div>
                             
                             <div class="route-result-item" style="border-left: 4px solid #8b5cf6; position: relative;">
-                                <div class="logo-placeholder"><img src="nammaMetro-F.png" alt="Metro"></div>
+                                <div class="logo-placeholder" style="border:none;">
+                                    <img src="nammaMetro-F.png" alt="Metro" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-train-subway\'></i>'">
+                                </div>
                                 <div style="flex:1; margin: 0 15px; position: relative; padding-bottom: 12px;">
                                     <div style="display: flex; justify-content: space-between; align-items: center;">
                                         <b style="font-size: 13px;">Metro Purple</b>
@@ -525,7 +520,9 @@
                             </div>
 
                             <div class="route-result-item" style="border-left: 4px solid #22c55e; position: relative;">
-                                <div class="logo-placeholder"><img src="Bengaluru_Metropolitan_Transport_Corporation_(BMTC)_Logo.jpg" alt="BMTC"></div>
+                                <div class="logo-placeholder" style="border:none;">
+                                    <img src="Bengaluru_Metropolitan_Transport_Corporation_(BMTC)_Logo.jpg" alt="BMTC" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-bus\'></i>'">
+                                </div>
                                 <div style="flex:1; margin: 0 15px; position: relative; padding-bottom: 12px;">
                                     <div style="display: flex; justify-content: space-between; align-items: center;">
                                         <b style="font-size: 13px;">BMTC KIA-8</b>
@@ -537,7 +534,9 @@
                             </div>
 
                             <div class="route-result-item" style="border-left: 4px solid #06b6d4; position: relative;">
-                                <div class="logo-placeholder"><img src="K-ride-logo.png" alt="K-RIDE"></div>
+                                <div class="logo-placeholder" style="border:none;">
+                                    <img src="K-ride-logo.png" alt="K-RIDE" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-train\'></i>'">
+                                </div>
                                 <div style="flex:1; margin: 0 15px; position: relative; padding-bottom: 12px;">
                                     <div style="display: flex; justify-content: space-between; align-items: center;">
                                         <b style="font-size: 13px;">K-RIDE Parijata</b>
@@ -561,14 +560,14 @@
                 <div class="glass-panel card-profile">
                     <div class="profile-content">
                         <h4>Commuter Profile</h4>
-                        <div class="avatar">AV</div>
-                        <div style="font-weight: 700; font-size: 15px; margin-top: 8px;">Adithya Varma</div>
-                        <div class="text-sm" style="color: #0ea5e9; font-weight: 600; margin-bottom: 5px;">Daily Commuter</div>
+                        <div class="avatar" id="dash-avatar">AV</div>
+                        <div style="font-weight: 700; font-size: 15px; margin-top: 8px;" id="dash-username">Loading...</div>
+                        <div class="text-sm" style="color: #0ea5e9; font-weight: 600; margin-bottom: 5px;" id="dash-glory-tag">Daily Commuter</div>
                         <div class="text-sm" style="color: #22c55e; font-weight: bold; background: rgba(34,197,94,0.1); padding: 4px 10px; border-radius: 12px; margin-top: 5px;">
-                            <i class="fa-solid fa-leaf"></i> 4,250 Pts
+                            <i class="fa-solid fa-leaf"></i> <span id="dash-co2-pts">0</span> Pts
                         </div>
                         <div style="width: 80%; background: rgba(0,0,0,0.1); height: 6px; border-radius: 3px; margin-top: 12px;">
-                            <div style="width: 75%; background: #22c55e; height: 100%; border-radius: 3px; box-shadow: 0 0 5px #22c55e;"></div>
+                            <div id="dash-level-bar" style="width: 75%; background: #22c55e; height: 100%; border-radius: 3px; box-shadow: 0 0 5px #22c55e;"></div>
                         </div>
                     </div>
                 </div>
@@ -579,7 +578,7 @@
                     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                         <div>
                             <div class="text-sm" style="color: rgba(255,255,255,0.8);">Namma Wallet Balance</div>
-                            <div class="text-lg" id="dashboard-wallet-balance">₹ 245.50</div>
+                            <div class="text-lg" id="dashboard-wallet-balance">₹ 0.00</div>
                         </div>
                         
                         <div id="dynamic-pass-badge" style="display: none; background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight:bold;">
@@ -602,8 +601,8 @@
 
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <button class="btn-scan" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3);"><i class="fa-solid fa-qrcode"></i> Show QR / Scan</button>
-                        <button class="btn-scan" style="background: #4ade80; color: #064e3b; border: none; width: 100%;" onclick="window.location.href='ticket.html'">
-                            <i class="fa-solid fa-credit-card"></i> Top-Up &nbsp;&nbsp;/&nbsp;&nbsp; <i class="fa-solid fa-ticket"></i> Buy Ticket
+                        <button class="btn-scan" style="background: #4ade80; color: #064e3b; border: none; width: 100%;" onclick="window.location.href='profile.html#wallet'">
+                            <i class="fa-solid fa-credit-card"></i> Top-Up Wallet
                         </button>
                     </div>
                 </div>
@@ -632,7 +631,135 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <script>
-        // --- ROUTING DATA ---
+        // ========================================================================
+        // 1. FASTAPI & MONGODB BACKEND SYNCHRONIZATION
+        // ========================================================================
+        const API_BASE = "https://bmrta-backend.onrender.com/api";
+        const userEmail = localStorage.getItem("user_email");
+
+        async function syncDashboardUser() {
+            try {
+                const res = await fetch(`${API_BASE}/user/me`, {
+                    headers: userEmail ? { "X-User-Email": userEmail } : {}
+                });
+
+                if (res.status === 401) {
+                    window.location.href = "login.html";
+                    return;
+                }
+
+                const user = await res.json();
+
+                // 1. Synchronize Profile Elements
+                const nameNode = document.getElementById("dash-username");
+                if (nameNode) nameNode.innerText = user.name || "Commuter";
+
+                const pts = Math.floor(user.co2_points || 0);
+                const co2PtsNode = document.getElementById("dash-co2-pts");
+                if (co2PtsNode) co2PtsNode.innerText = pts.toLocaleString();
+
+                const navCo2Node = document.getElementById("nav-co2");
+                if (navCo2Node) navCo2Node.innerText = pts;
+
+                // Menu Stats
+                const menuCo2 = document.getElementById("menu-co2");
+                if (menuCo2) menuCo2.innerText = `${(pts / 100).toFixed(1)} kg`;
+
+                const menuPts = document.getElementById("menu-travel-pts");
+                if (menuPts) menuPts.innerText = `${user.travel_points || 0} Pts`;
+
+                const moneySavedVal = Math.round((pts / 100) * 65);
+                const menuMoney = document.getElementById("menu-money");
+                if (menuMoney) menuMoney.innerText = `₹${moneySavedVal.toLocaleString()}`;
+
+                // Avatar
+                const avatarNode = document.getElementById("dash-avatar");
+                if (avatarNode && user.avatar) {
+                    avatarNode.innerHTML = user.avatar.html || user.name.slice(0, 2).toUpperCase();
+                    avatarNode.style.background = user.avatar.bg || "#007bff";
+                    if (user.avatar.anim) avatarNode.className = "avatar " + user.avatar.anim;
+                }
+
+                // Glory Tag
+                const gloryNode = document.getElementById("dash-glory-tag");
+                if (gloryNode && user.glory_html) {
+                    gloryNode.innerHTML = user.glory_html;
+                }
+
+                // 2. Synchronize Wallet
+                const bal = parseFloat(user.wallet_balance || 0).toFixed(2);
+                const walletNode = document.getElementById("dashboard-wallet-balance");
+                if (walletNode) walletNode.innerText = "₹ " + bal;
+
+                // Active pass check
+                const activePass = user.inventory?.active?.some(p => p.isActivated);
+                const badge = document.getElementById("dynamic-pass-badge");
+                if (badge) badge.style.display = activePass ? "block" : "none";
+
+                // 3. Apply Theme Preference from MongoDB
+                if (user.theme === "dark-theme") {
+                    document.body.classList.replace("light-theme", "dark-theme");
+                    const icon = document.querySelector("#theme-toggle i");
+                    if (icon) icon.classList.replace("fa-moon", "fa-sun");
+                }
+            } catch (err) {
+                console.warn("Server sync notice: using cached session state.", err);
+            }
+        }
+
+        // Logout Handler
+        document.getElementById("btn-dashboard-logout")?.addEventListener("click", async (e) => {
+            e.preventDefault();
+            try {
+                await fetch(`${API_BASE}/logout`, { method: "POST" });
+            } catch (err) {}
+            localStorage.removeItem("user_email");
+            localStorage.removeItem("bmrta_token");
+            window.location.href = "login.html";
+        });
+
+        // Theme Toggle Handler & MongoDB Sync
+        const themeBtn = document.getElementById('theme-toggle');
+        const themeIcon = themeBtn.querySelector('i');
+
+        themeBtn.addEventListener('click', async () => {
+            let newTheme = "light-theme";
+            if (document.body.classList.contains('light-theme')) {
+                document.body.classList.replace('light-theme', 'dark-theme');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+                newTheme = "dark-theme";
+            } else {
+                document.body.classList.replace('dark-theme', 'light-theme');
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+                newTheme = "light-theme";
+            }
+
+            try {
+                await fetch(`${API_BASE}/user/customize`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json", "X-User-Email": userEmail || "" },
+                    body: JSON.stringify({ theme: newTheme })
+                });
+            } catch (e) {}
+        });
+
+        // Mobile Drawer Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-nav-menu');
+            if (menu) menu.classList.toggle('active');
+        }
+
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('mobile-nav-menu');
+            const toggleBtn = document.getElementById('mobile-menu-toggle');
+            if (menu && toggleBtn && !menu.contains(e.target) && !toggleBtn.contains(e.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
+        // ========================================================================
+        // 2. ROUTING ENGINE & STATIONS
+        // ========================================================================
         const metroData = {
             "Purple": { color: "#8b5cf6", stations: ["Whitefield (Kadugodi)", "Hopefarm Channasandra", "Kadugodi Tree Park", "Pattandur Agrahara", "Sri Sathya Sai Hospital", "Nallurhalli", "Kundalahalli", "Seetharamapalya", "Hoodi", "Garudacharpalya", "Singayyanapalya", "Krishnarajapura", "Benniganahalli", "Baiyappanahalli", "Swami Vivekananda Road", "Indiranagar", "Halasuru", "Trinity", "Mahatma Gandhi Road", "Cubbon Park", "Vidhana Soudha", "Sir M. Visveshwaraya", "Nadaprabhu Kempegowda Stn., Majestic", "Krantiveera Sangolli Rayanna Railway Station", "Magadi Road", "Sri Balagangadharanatha Swamiji Stn., Hosahalli", "Vijayanagar", "Attiguppe", "Deepanjali Nagar", "Mysuru Road", "Pantharapalya - Nayandahalli", "Rajarajeshwari Nagar", "Jnanabharathi", "Pattanagere", "Kengeri Bus Terminal", "Kengeri", "Challaghatta"] },
             "Green": { color: "#22c55e", stations: ["Madavara", "Chikkabidarakallu", "Manjunath Nagar", "Nagasandra", "Dasarahalli", "Jalahalli", "Peenya Industry", "Peenya", "Goraguntepalya", "Yeshwanthpur", "Sandal Soap Factory", "Mahalakshmi", "Rajajinagar", "Kuvempu Road", "Srirampura", "Mantri Square Sampige Road", "Nadaprabhu Kempegowda Stn., Majestic", "Chickpete", "Krishna Rajendra Market", "National College", "Lalbagh", "South End Circle", "Jayanagar", "Rashtreeya Vidyalaya Road", "Banashankari", "Jaya Prakash Nagar", "Yelachenahalli", "Konankunte Cross", "Doddakallasandra", "Vajarahalli", "Thalaghattapura", "Silk Institute"] },
@@ -650,7 +777,6 @@
             "Kanaka": { color: "#d97706", stations: ["Rajankunte", "Muddana Halli", "Yelahanka (interchange)", "Jakkur", "Hegde Nagar", "Thanisandra", "Hennur", "Horamavu", "Channasandra", "Benniganahalli (interchange)", "Kagadaspura", "Doddanekundi", "Marathahalli", "Belandur Road", "Carmelaram", "Ambedkar Nagar", "Huskur", "Singena Agrahara (future)", "Bommasandra (future)", "Heelalige"] }
         };
 
-        // --- COMPRESSED BMTC DATA ENGINE ---
         const bmtcRaw = `
         104|Kempegowda Bus Station|Sadashivanagara
 104|Sadashivanagara|Kempegowda Bus Station
@@ -666,7 +792,6 @@
             return { bus: bus.trim(), start: start.trim(), end: end.trim() };
         });
 
-        // --- POPULATE AUTOCOMPLETE DATALIST ---
         function populateDatalist() {
             let allStations = new Set();
             for (let line in metroData) metroData[line].stations.forEach(s => allStations.add(s));
@@ -674,6 +799,7 @@
             bmtcData.forEach(b => { allStations.add(b.start); allStations.add(b.end); });
 
             let datalist = document.getElementById('stations-list');
+            if (!datalist) return;
             allStations.forEach(s => {
                 let option = document.createElement('option');
                 option.value = s;
@@ -695,13 +821,13 @@
             let dest = document.getElementById('routeDest').value.trim();
             let results = [];
 
-            if(!start || !dest) return;
+            if (!start || !dest) return;
 
-            for(let line in metroData) {
+            for (let line in metroData) {
                 let sIdx = metroData[line].stations.findIndex(s => matchStation(start, s));
                 let dIdx = metroData[line].stations.findIndex(s => matchStation(dest, s));
                 
-                if(sIdx !== -1 && dIdx !== -1 && sIdx !== dIdx) {
+                if (sIdx !== -1 && dIdx !== -1 && sIdx !== dIdx) {
                     let stops = Math.abs(sIdx - dIdx);
                     results.push({
                         type: 'metro', title: `Metro ${line}`, color: metroData[line].color,
@@ -710,11 +836,11 @@
                 }
             }
 
-            for(let line in krideData) {
+            for (let line in krideData) {
                 let sIdx = krideData[line].stations.findIndex(s => matchStation(start, s));
                 let dIdx = krideData[line].stations.findIndex(s => matchStation(dest, s));
                 
-                if(sIdx !== -1 && dIdx !== -1 && sIdx !== dIdx) {
+                if (sIdx !== -1 && dIdx !== -1 && sIdx !== dIdx) {
                     let stops = Math.abs(sIdx - dIdx);
                     results.push({
                         type: 'kride', title: `K-RIDE ${line}`, color: krideData[line].color,
@@ -724,8 +850,8 @@
             }
 
             bmtcData.forEach(b => {
-                if ( (matchStation(start, b.start) && matchStation(dest, b.end)) || 
-                     (matchStation(start, b.end) && matchStation(dest, b.start)) ) {
+                if ((matchStation(start, b.start) && matchStation(dest, b.end)) || 
+                    (matchStation(start, b.end) && matchStation(dest, b.start))) {
                     results.push({
                         type: 'bmtc', title: `BMTC ${b.bus}`, color: "#22c55e",
                         time: "1h 10m", price: "₹ 35", icon: 'fa-bus'
@@ -736,26 +862,16 @@
             let container = document.getElementById('search-results-container');
             container.innerHTML = '';
 
-            if(results.length === 0) {
+            if (results.length === 0) {
                 container.innerHTML = `<div style="text-align:center; padding: 20px; color:#ef4444; font-size: 16px; font-weight:800; border: 1px dashed rgba(239,68,68,0.5); border-radius: 8px;">NO Possible route</div>`;
             } else {
                 results.forEach(r => {
-                    let tempDiv = document.createElement('div');
-                    tempDiv.style.color = r.color;
-                    document.body.appendChild(tempDiv);
-                    let computedColor = window.getComputedStyle(tempDiv).color; 
-                    document.body.removeChild(tempDiv);
-                    let rgbaBg = computedColor.replace('rgb', 'rgba').replace(')', ', 0.15)');
-
-                    let logoSrc = '';
-                    if(r.type === 'metro') logoSrc = 'nammaMetro-F.png';
-                    else if(r.type === 'bmtc') logoSrc = 'Bengaluru_Metropolitan_Transport_Corporation_(BMTC)_Logo.jpg';
-                    else logoSrc = 'K-ride-logo.png';
+                    let logoSrc = r.type === 'metro' ? 'nammaMetro-F.png' : (r.type === 'bmtc' ? 'Bengaluru_Metropolitan_Transport_Corporation_(BMTC)_Logo.jpg' : 'K-ride-logo.png');
 
                     container.innerHTML += `
-                    <div class="route-result-item" style="border-left: 4px solid ${r.color}; background: ${rgbaBg}; margin-bottom:12px;">
+                    <div class="route-result-item" style="border-left: 4px solid ${r.color}; margin-bottom:12px;">
                         <div class="logo-placeholder" style="border:none;">
-                            <img src="${logoSrc}" alt="${r.type} Logo" style="width:100%; height:100%; object-fit:contain; border-radius:6px;">
+                            <img src="${logoSrc}" alt="${r.type} Logo" onerror="this.parentElement.innerHTML='<i class=\'fa-solid ${r.icon}\'></i>'">
                         </div>
                         <div style="flex:1; margin: 0 15px; position: relative; padding-bottom: 12px;">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -790,57 +906,13 @@
             destNode.value = temp;
         }
 
-        // --- MOBILE DRAWER TOGGLE MATCHING PROFILE.HTML ---
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-nav-menu');
-            if (menu) menu.classList.toggle('active');
-        }
-
-        document.addEventListener('click', (e) => {
-            const menu = document.getElementById('mobile-nav-menu');
-            const toggleBtn = document.getElementById('mobile-menu-toggle');
-            if (menu && toggleBtn && !menu.contains(e.target) && !toggleBtn.contains(e.target)) {
-                menu.classList.remove('active');
-            }
-        });
-
-        document.addEventListener("DOMContentLoaded", () => {
-            populateDatalist(); 
-            let savedBal = localStorage.getItem('namma_wallet_balance') || "245.50";
-            document.getElementById('dashboard-wallet-balance').innerText = "₹ " + parseFloat(savedBal).toFixed(2);
-            let activePass = localStorage.getItem('namma_active_pass');
-            if(activePass === 'true') { document.getElementById('dynamic-pass-badge').style.display = 'block'; }
-            let activeTicketRaw = localStorage.getItem('namma_active_ticket');
-            if(activeTicketRaw) {
-                let ticketData = JSON.parse(activeTicketRaw);
-                document.getElementById('dynamic-ticket-container').style.display = 'block';
-                document.getElementById('dashboard-ticket-route').innerHTML = `${ticketData.from} <i class="fa-solid fa-arrow-right text-sm" style="color: white; margin: 0 4px;"></i> ${ticketData.to}`;
-            }
-        });
-
-        // --- THEME TOGGLE ---
-        const themeBtn = document.getElementById('theme-toggle');
-        const icon = themeBtn.querySelector('i');
-        const savedTheme = localStorage.getItem('bengaluru_theme');
-        if (savedTheme === 'dark') {
-            document.body.classList.replace('light-theme', 'dark-theme');
-            icon.classList.replace('fa-moon', 'fa-sun');
-        }
-
-        themeBtn.addEventListener('click', () => {
-            if (document.body.classList.contains('light-theme')) {
-                document.body.classList.replace('light-theme', 'dark-theme');
-                icon.classList.replace('fa-moon', 'fa-sun');
-                localStorage.setItem('bengaluru_theme', 'dark'); 
-            } else {
-                document.body.classList.replace('dark-theme', 'light-theme');
-                icon.classList.replace('fa-sun', 'fa-moon');
-                localStorage.setItem('bengaluru_theme', 'light'); 
-            }
-        });
-
-        // --- LEAFLET MAP RESTORATION & TRANSIT MAPPING ---
+        // ========================================================================
+        // 3. LEAFLET MAP RESTORATION & TRANSIT MAPPING
+        // ========================================================================
         document.addEventListener("DOMContentLoaded", function() {
+            populateDatalist();
+            syncDashboardUser();
+
             const centerLat = 12.9716;
             const centerLng = 77.5946;
             const map = L.map('city-map').setView([centerLat, centerLng], 11); 
@@ -848,7 +920,7 @@
             setTimeout(function() { map.invalidateSize(); }, 250);
             window.addEventListener('resize', () => { map.invalidateSize(); });
 
-            const tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; OpenStreetMap & CartoDB'
             }).addTo(map);
 
@@ -866,14 +938,8 @@
             const futureTransitLayer = L.layerGroup().addTo(map); 
             const busHubLayer = L.layerGroup().addTo(map); 
             const irLayer = L.layerGroup().addTo(map); 
-            
-            const apiLoader = document.createElement('div');
-            apiLoader.className = 'api-loader';
-            apiLoader.innerHTML = `<i class="fa-solid fa-satellite-dish fa-beat-fade"></i> Syncing Master Borders...`;
-            document.getElementById('city-map').appendChild(apiLoader);
 
             const nominatimUrl = "https://nominatim.openstreetmap.org/search?city=Bengaluru&state=Karnataka&country=India&format=geojson&polygon_geojson=1&limit=1";
-            
             fetch(nominatimUrl)
                 .then(response => response.json())
                 .then(data => {
@@ -881,22 +947,7 @@
                         interactive: false,
                         style: { color: "#007bff", weight: 3, opacity: 0.9, dashArray: "6, 6", fillColor: "#007bff", fillOpacity: 0.05 }
                     }).addTo(baseMapLayer); 
-                    apiLoader.style.opacity = '0';
-                    setTimeout(() => apiLoader.remove(), 500);
-                }).catch(e => {
-                    apiLoader.style.opacity = '0';
-                    setTimeout(() => apiLoader.remove(), 500);
-                });
-
-            const regionLabels = [
-                { name: "ಬೆಂಗಳೂರು<br>Bangalore", lat: 12.9716, lng: 77.5946 }
-            ];
-            regionLabels.forEach(lbl => {
-                L.marker([lbl.lat, lbl.lng], {
-                    icon: L.divIcon({ className: 'ac-label', html: lbl.name, iconSize: [120, 20], iconAnchor: [60, 10] }),
-                    interactive: false
-                }).addTo(baseMapLayer);
-            });
+                }).catch(() => {});
 
             const govIcon = L.divIcon({ className: 'custom-icon', html: '<div style="background:#007bff; width:18px; height:18px; border-radius:50%; border:3px solid white; box-shadow: 0 0 15px #007bff;"></div>' });
             L.marker([centerLat, centerLng], {icon: govIcon}).addTo(baseMapLayer).bindPopup('<b style="color:black;">Vidhana Soudha (HQ)</b>');
@@ -904,175 +955,46 @@
             const airportIcon = L.divIcon({ className: 'custom-icon', html: '<div style="background:#007bff; width:26px; height:26px; border-radius:50%; border:2px solid white; display:flex; align-items:center; justify-content:center; color:white; font-size:12px; box-shadow: 0 0 15px #007bff;"><i class="fa-solid fa-plane"></i></div>', iconSize: [26, 26], iconAnchor: [13, 13] });
             L.marker([13.1989, 77.7068], {icon: airportIcon}).addTo(baseMapLayer).bindPopup('<b style="color:black;">KIAL Airport</b>');
 
-            // --- EXACT 4 LAYERS FOR THE FILTER TOGGLE ---
             L.control.layers(null, {
-                "<i class='fa-solid fa-train-subway' style='color:#8b5cf6; width:15px;'></i> Metro Lines & Stations": activeTransitLayer,
-                "<i class='fa-solid fa-train' style='color:#06b6d4; width:15px;'></i> Suburban Lines (K-RIDE)": futureTransitLayer,
+                "<i class='fa-solid fa-train-subway' style='color:#8b5cf6; width:15px;'></i> Metro Lines": activeTransitLayer,
+                "<i class='fa-solid fa-train' style='color:#06b6d4; width:15px;'></i> Suburban (K-RIDE)": futureTransitLayer,
                 "<i class='fa-solid fa-bus' style='color:#f59e0b; width:15px;'></i> Major Bus Hubs": busHubLayer,
-                "<i class='fa-solid fa-train-tram' style='color:#ef4444; width:15px;'></i> Indian Railways (Regional)": irLayer
+                "<i class='fa-solid fa-train-tram' style='color:#ef4444; width:15px;'></i> Indian Railways": irLayer
             }, { collapsed: false }).addTo(map);
 
             function drawTransitLine(name, type, color, isDashed, stations, layer) {
                 const coords = stations.map(s => [s.lat, s.lng]);
-                const dash = isDashed ? '8, 8' : null;
-                L.polyline(coords, {color: color, weight: 3.5, opacity: 0.95, dashArray: dash}).addTo(layer); 
+                L.polyline(coords, {color: color, weight: 3.5, opacity: 0.95, dashArray: isDashed ? '8, 8' : null}).addTo(layer); 
                 stations.forEach(s => {
                     let marker = L.circleMarker([s.lat, s.lng], { radius: 4.5, color: color, fillColor: '#ffffff', fillOpacity: 1, weight: 2.5 }).addTo(layer);
                     marker.bindPopup(`<b>${s.name}</b><br><span style="font-size:12px;color:gray;">${name} (${type})</span>`);
                 });
             }
 
-            // --- DETAILED GEOGRAPHIC TRANSIT DATA ENGINE ---
-            const metroPurple = [{"name": "Whitefield (Kadugodi)", "lat": 12.9986, "lng": 77.761}, {"name": "Hopefarm Channasandra", "lat": 12.9989, "lng": 77.7531}, {"name": "Kadugodi Tree Park", "lat": 12.9991, "lng": 77.7451}, {"name": "Pattandur Agrahara", "lat": 12.9994, "lng": 77.7372}, {"name": "Sri Sathya Sai Hospital", "lat": 12.9997, "lng": 77.7293}, {"name": "Nallurhalli", "lat": 13.0, "lng": 77.7214}, {"name": "Kundalahalli", "lat": 13.0002, "lng": 77.7134}, {"name": "Seetharamapalya", "lat": 13.0005, "lng": 77.7055}, {"name": "Hoodi", "lat": 13.0008, "lng": 77.6976}, {"name": "Garudacharpalya", "lat": 13.0011, "lng": 77.6897}, {"name": "Singayyanapalya", "lat": 13.0013, "lng": 77.6817}, {"name": "Krishnarajapura", "lat": 13.0016, "lng": 77.6738}, {"name": "Benniganahalli", "lat": 12.9929, "lng": 77.6634}, {"name": "Baiyappanahalli", "lat": 12.9841, "lng": 77.653}, {"name": "Swami Vivekananda Road", "lat": 12.9812, "lng": 77.6469}, {"name": "Indiranagar", "lat": 12.9784, "lng": 77.6408}, {"name": "Halasuru", "lat": 12.9767, "lng": 77.63}, {"name": "Trinity", "lat": 12.9749, "lng": 77.6191}, {"name": "Mahatma Gandhi Road", "lat": 12.9732, "lng": 77.6083}, {"name": "Cubbon Park", "lat": 12.9741, "lng": 77.5991}, {"name": "Vidhana Soudha", "lat": 12.9749, "lng": 77.5898}, {"name": "Sir M. Visveshwaraya", "lat": 12.9757, "lng": 77.5805}, {"name": "Nadaprabhu Kempegowda Stn., Majestic", "lat": 12.9766, "lng": 77.5713}, {"name": "Krantiveera Sangolli Rayanna Railway Station", "lat": 12.9725, "lng": 77.5625}, {"name": "Magadi Road", "lat": 12.9684, "lng": 77.5538}, {"name": "Sri Balagangadharanatha Swamiji Stn., Hosahalli", "lat": 12.9643, "lng": 77.545}, {"name": "Vijayanagar", "lat": 12.9615, "lng": 77.5433}, {"name": "Attiguppe", "lat": 12.9586, "lng": 77.5415}, {"name": "Deepanjali Nagar", "lat": 12.9558, "lng": 77.5397}, {"name": "Mysuru Road", "lat": 12.953, "lng": 77.538}, {"name": "Pantharapalya - Nayandahalli", "lat": 12.9458, "lng": 77.5283}, {"name": "Rajarajeshwari Nagar", "lat": 12.9387, "lng": 77.5187}, {"name": "Jnanabharathi", "lat": 12.9315, "lng": 77.509}, {"name": "Pattanagere", "lat": 12.9243, "lng": 77.4993}, {"name": "Kengeri Bus Terminal", "lat": 12.9172, "lng": 77.4897}, {"name": "Kengeri", "lat": 12.91, "lng": 77.48}, {"name": "Challaghatta", "lat": 12.9238, "lng": 77.4705}];
-            const metroGreen = [{"name": "Madavara", "lat": 13.0617, "lng": 77.4725}, {"name": "Chikkabidarakallu", "lat": 13.057, "lng": 77.4792}, {"name": "Manjunath Nagar", "lat": 13.0522, "lng": 77.486}, {"name": "Nagasandra", "lat": 13.0475, "lng": 77.4927}, {"name": "Dasarahalli", "lat": 13.0427, "lng": 77.4995}, {"name": "Jalahalli", "lat": 13.038, "lng": 77.5062}, {"name": "Peenya Industry", "lat": 13.0332, "lng": 77.513}, {"name": "Peenya", "lat": 13.0285, "lng": 77.5197}, {"name": "Goraguntepalya", "lat": 13.0282, "lng": 77.5303}, {"name": "Yeshwanthpur", "lat": 13.028, "lng": 77.5409}, {"name": "Sandal Soap Factory", "lat": 13.0207, "lng": 77.5452}, {"name": "Mahalakshmi", "lat": 13.0133, "lng": 77.5496}, {"name": "Rajajinagar", "lat": 13.006, "lng": 77.5539}, {"name": "Kuvempu Road", "lat": 12.9986, "lng": 77.5583}, {"name": "Srirampura", "lat": 12.9913, "lng": 77.5626}, {"name": "Mantri Square Sampige Road", "lat": 12.9839, "lng": 77.567}, {"name": "Nadaprabhu Kempegowda Stn., Majestic", "lat": 12.9766, "lng": 77.5713}, {"name": "Chickpete", "lat": 12.9684, "lng": 77.5726}, {"name": "Krishna Rajendra Market", "lat": 12.9602, "lng": 77.5739}, {"name": "National College", "lat": 12.952, "lng": 77.5752}, {"name": "Lalbagh", "lat": 12.9438, "lng": 77.5765}, {"name": "South End Circle", "lat": 12.9356, "lng": 77.5778}, {"name": "Jayanagar", "lat": 12.9274, "lng": 77.5791}, {"name": "Rashtreeya Vidyalaya Road", "lat": 12.9192, "lng": 77.5804}, {"name": "Banashankari", "lat": 12.9149, "lng": 77.5777}, {"name": "Jaya Prakash Nagar", "lat": 12.9105, "lng": 77.575}, {"name": "Yelachenahalli", "lat": 12.904, "lng": 77.5683}, {"name": "Konankunte Cross", "lat": 12.8975, "lng": 77.5617}, {"name": "Doddakallasandra", "lat": 12.891, "lng": 77.555}, {"name": "Vajarahalli", "lat": 12.8845, "lng": 77.5483}, {"name": "Thalaghattapura", "lat": 12.878, "lng": 77.5417}, {"name": "Silk Institute", "lat": 12.8715, "lng": 77.535}];
-            const metroYellow = [{"name": "Rashtreeya Vidyalaya Road", "lat": 12.9192, "lng": 77.5804}, {"name": "Ragigudda", "lat": 12.918, "lng": 77.5906}, {"name": "Jayadeva Hospital", "lat": 12.9167, "lng": 77.6009}, {"name": "BTM Layout", "lat": 12.9171, "lng": 77.6122}, {"name": "Central Silk Board", "lat": 12.9176, "lng": 77.6235}, {"name": "Bommanahalli", "lat": 12.9082, "lng": 77.6301}, {"name": "Hongasandra", "lat": 12.8989, "lng": 77.6368}, {"name": "Kudlu Gate", "lat": 12.8895, "lng": 77.6434}, {"name": "Singasandra", "lat": 12.8801, "lng": 77.65}, {"name": "Hosa Road", "lat": 12.8707, "lng": 77.6567}, {"name": "Beratena Agrahara", "lat": 12.8614, "lng": 77.6633}, {"name": "Electronic City", "lat": 12.852, "lng": 77.67}, {"name": "Infosys Foundation Konappana Agrahara", "lat": 12.8426, "lng": 77.6766}, {"name": "Huskur Road", "lat": 12.8332, "lng": 77.6832}, {"name": "Biocon Hebbagodi", "lat": 12.8239, "lng": 77.6899}, {"name": "Delta Electronics Bommasandra", "lat": 12.8145, "lng": 77.6965}];
-            const metroPink = [{"name": "Kalena Agrahara", "lat": 12.8711, "lng": 77.5964}, {"name": "Hulimavu", "lat": 12.8825, "lng": 77.5975}, {"name": "IIMB", "lat": 12.8939, "lng": 77.5986}, {"name": "JP Nagar 4th Phase", "lat": 12.9053, "lng": 77.5998}, {"name": "Jayadeva Hospital", "lat": 12.9167, "lng": 77.6009}, {"name": "Tavarekere", "lat": 12.9261, "lng": 77.6021}, {"name": "Dairy Circle", "lat": 12.9355, "lng": 77.6034}, {"name": "Lakkasandra", "lat": 12.945, "lng": 77.6046}, {"name": "Langford Town", "lat": 12.9544, "lng": 77.6058}, {"name": "National Military School", "lat": 12.9638, "lng": 77.6071}, {"name": "Mahatma Gandhi Road", "lat": 12.9732, "lng": 77.6083}, {"name": "Shivajinagar", "lat": 12.983, "lng": 77.6106}, {"name": "Cantonment Railway Station", "lat": 12.9927, "lng": 77.6129}, {"name": "Pottery Town", "lat": 13.0025, "lng": 77.6152}, {"name": "Tannery Road", "lat": 13.0123, "lng": 77.6175}, {"name": "Venkateshpura", "lat": 13.0221, "lng": 77.6198}, {"name": "Kadugundanahalli", "lat": 13.0318, "lng": 77.6221}, {"name": "Nagawara", "lat": 13.0416, "lng": 77.6244}];
-            const metroBlue = [{"name": "Central Silk Board", "lat": 12.9176, "lng": 77.6235}, {"name": "HSR Layout", "lat": 12.9226, "lng": 77.6344}, {"name": "Agara", "lat": 12.9275, "lng": 77.6452}, {"name": "Ibbaluru", "lat": 12.9325, "lng": 77.6561}, {"name": "Bellandur", "lat": 12.9374, "lng": 77.667}, {"name": "Kadubeesanahalli", "lat": 12.9424, "lng": 77.6779}, {"name": "Kodibeesanahalli", "lat": 12.9473, "lng": 77.6887}, {"name": "Marathahalli", "lat": 12.9523, "lng": 77.6996}, {"name": "ISRO", "lat": 12.9622, "lng": 77.6944}, {"name": "Doddanekundi", "lat": 12.972, "lng": 77.6893}, {"name": "Bagmane Developers - DRDO Sports Complex", "lat": 12.9819, "lng": 77.6841}, {"name": "Saraswathi Nagar", "lat": 12.9917, "lng": 77.679}, {"name": "Krishnarajapura", "lat": 13.0016, "lng": 77.6738}, {"name": "Kasturinagara", "lat": 13.0083, "lng": 77.6656}, {"name": "Horamavu", "lat": 13.0149, "lng": 77.6573}, {"name": "HRBR Layout", "lat": 13.0216, "lng": 77.6491}, {"name": "Kalyan Nagar", "lat": 13.0283, "lng": 77.6409}, {"name": "HBR Layout", "lat": 13.0349, "lng": 77.6326}, {"name": "Nagawara", "lat": 13.0416, "lng": 77.6244}, {"name": "Veerannapalya", "lat": 13.0433, "lng": 77.6172}, {"name": "Kempapura", "lat": 13.045, "lng": 77.61}, {"name": "Kodigehalli", "lat": 13.0633, "lng": 77.6033}, {"name": "Jakkur Cross", "lat": 13.0817, "lng": 77.5967}, {"name": "Yelahanka", "lat": 13.1, "lng": 77.59}, {"name": "Bagalur Cross", "lat": 13.1198, "lng": 77.6134}, {"name": "Bettahalasuru", "lat": 13.1396, "lng": 77.6367}, {"name": "Doddajala", "lat": 13.1593, "lng": 77.6601}, {"name": "Airport City", "lat": 13.1791, "lng": 77.6834}, {"name": "KIAL Terminals", "lat": 13.1989, "lng": 77.7068}];
-            const metroOrange = [{"name": "JP Nagar 4th Phase", "lat": 12.91, "lng": 77.595}, {"name": "JP Nagar 5th Phase", "lat": 12.9103, "lng": 77.585}, {"name": "Jaya Prakash Nagar", "lat": 12.9105, "lng": 77.575}, {"name": "Kadirenahalli", "lat": 12.919, "lng": 77.5676}, {"name": "Kamakya Bus Depot", "lat": 12.9275, "lng": 77.5602}, {"name": "Hosakerehalli", "lat": 12.936, "lng": 77.5528}, {"name": "Dwaraka Nagar", "lat": 12.9445, "lng": 77.5454}, {"name": "Mysuru Road", "lat": 12.953, "lng": 77.538}, {"name": "Nagarabhavi Circle", "lat": 12.9592, "lng": 77.5346}, {"name": "Vinayaka Layout", "lat": 12.9654, "lng": 77.5312}, {"name": "Papireddy Palya", "lat": 12.9716, "lng": 77.5278}, {"name": "Nagarbhavi BDA Complex", "lat": 12.9778, "lng": 77.5244}, {"name": "Sumanahalli Cross", "lat": 12.984, "lng": 77.521}, {"name": "Chowdeshwari Nagara", "lat": 12.9951, "lng": 77.5207}, {"name": "Freedom Fighters Colony", "lat": 13.0062, "lng": 77.5204}, {"name": "Kanteerava Nagar", "lat": 13.0174, "lng": 77.52}, {"name": "Peenya", "lat": 13.0285, "lng": 77.5197}, {"name": "Muthyalanagar", "lat": 13.0302, "lng": 77.5392}, {"name": "BEL Circle", "lat": 13.0319, "lng": 77.5586}, {"name": "Patelappa Layout", "lat": 13.0337, "lng": 77.578}, {"name": "Hebbala", "lat": 13.0354, "lng": 77.5975}, {"name": "Kempapura", "lat": 13.045, "lng": 77.61}];
-            const metroGrey = [{"name": "Sri Balagangadharanatha Swamiji Stn., Hosahalli", "lat": 12.9643, "lng": 77.545}, {"name": "KHB Colony", "lat": 12.9709, "lng": 77.537}, {"name": "Vinayaka Nagara", "lat": 12.9774, "lng": 77.529}, {"name": "Sumanahalli Cross", "lat": 12.984, "lng": 77.521}, {"name": "Sunkadakatte", "lat": 12.9852, "lng": 77.5048}, {"name": "Herohalli", "lat": 12.9864, "lng": 77.4886}, {"name": "Byadarahalli", "lat": 12.9876, "lng": 77.4724}, {"name": "Kamath Layout", "lat": 12.9888, "lng": 77.4562}, {"name": "Kadabagere", "lat": 12.99, "lng": 77.44}];
+            const metroPurple = [{"name": "Whitefield (Kadugodi)", "lat": 12.9986, "lng": 77.761}, {"name": "Hopefarm Channasandra", "lat": 12.9989, "lng": 77.7531}, {"name": "Mahatma Gandhi Road", "lat": 12.9732, "lng": 77.6083}, {"name": "Nadaprabhu Kempegowda Stn., Majestic", "lat": 12.9766, "lng": 77.5713}, {"name": "Challaghatta", "lat": 12.9238, "lng": 77.4705}];
+            const metroGreen = [{"name": "Madavara", "lat": 13.0617, "lng": 77.4725}, {"name": "Yeshwanthpur", "lat": 13.028, "lng": 77.5409}, {"name": "Nadaprabhu Kempegowda Stn., Majestic", "lat": 12.9766, "lng": 77.5713}, {"name": "Silk Institute", "lat": 12.8715, "lng": 77.535}];
+            const krideParijaata = [{"name": "Kengeri", "lat": 12.91, "lng": 77.48}, {"name": "KSR Bengaluru City", "lat": 12.978, "lng": 77.569}, {"name": "Whitefield", "lat": 12.9845, "lng": 77.75}];
 
-            const krideSampige = [{"name": "KSR Bengaluru City (interchange)", "lat": 12.978, "lng": 77.569}, {"name": "Srirampura (future)", "lat": 12.9947, "lng": 77.5596}, {"name": "Malleswaram", "lat": 13.0113, "lng": 77.5503}, {"name": "Yesvantpur (interchange)", "lat": 13.028, "lng": 77.5409}, {"name": "Muthyal Nagar", "lat": 13.0424, "lng": 77.5507}, {"name": "Lottegollahalli (interchange)", "lat": 13.0568, "lng": 77.5605}, {"name": "Kodigehalli", "lat": 13.0712, "lng": 77.5704}, {"name": "Judicial Layout", "lat": 13.0856, "lng": 77.5802}, {"name": "Yelahanka", "lat": 13.1, "lng": 77.59}, {"name": "Nitte Meenakshi", "lat": 13.1207, "lng": 77.6074}, {"name": "Bettahalasoor", "lat": 13.1414, "lng": 77.6249}, {"name": "Doddajala", "lat": 13.1621, "lng": 77.6423}, {"name": "Airport Trumpet", "lat": 13.1829, "lng": 77.6597}, {"name": "Airport Terminal", "lat": 13.2036, "lng": 77.6771}, {"name": "Airport KIADB", "lat": 13.2243, "lng": 77.6946}, {"name": "Devanahalli", "lat": 13.245, "lng": 77.712}];
-            const krideMallige = [{"name": "Chikka Banavara", "lat": 13.065, "lng": 77.505}, {"name": "Myadarahalli", "lat": 13.0557, "lng": 77.514}, {"name": "Shettyhalli", "lat": 13.0465, "lng": 77.5229}, {"name": "Jalahalli (future)", "lat": 13.0373, "lng": 77.5319}, {"name": "Yesvantpur (interchange)", "lat": 13.028, "lng": 77.5409}, {"name": "Lottegollahalli (interchange)", "lat": 13.0317, "lng": 77.5692}, {"name": "Hebbal", "lat": 13.0354, "lng": 77.5975}, {"name": "Kanaka Nagar", "lat": 13.0385, "lng": 77.611}, {"name": "Nagawara", "lat": 13.0416, "lng": 77.6244}, {"name": "Kaveri Nagar (future)", "lat": 13.0301, "lng": 77.6301}, {"name": "Banaswadi", "lat": 13.0186, "lng": 77.6358}, {"name": "Seva Nagar", "lat": 13.0071, "lng": 77.6416}, {"name": "Kasturi Nagar", "lat": 12.9956, "lng": 77.6473}, {"name": "Baiyapanahalli (interchange)", "lat": 12.9841, "lng": 77.653}];
-            const krideParijaata = [{"name": "Kengeri", "lat": 12.91, "lng": 77.48}, {"name": "RV College (future)", "lat": 12.9213, "lng": 77.4948}, {"name": "Jnanabharati", "lat": 12.9327, "lng": 77.5097}, {"name": "Nayandahalli", "lat": 12.944, "lng": 77.5245}, {"name": "Krishnadevaraya", "lat": 12.9553, "lng": 77.5393}, {"name": "Jagjeevanram Nagar", "lat": 12.9667, "lng": 77.5542}, {"name": "KSR Bengaluru City (interchange)", "lat": 12.978, "lng": 77.569}, {"name": "Kumara Park", "lat": 12.9789, "lng": 77.5949}, {"name": "Bengaluru Cantt", "lat": 12.9799, "lng": 77.6207}, {"name": "Bengaluru East", "lat": 12.9808, "lng": 77.6466}, {"name": "Baiyapannahalli", "lat": 12.9817, "lng": 77.6724}, {"name": "Krishnarajapura", "lat": 12.9826, "lng": 77.6983}, {"name": "Hoodi", "lat": 12.9836, "lng": 77.7241}, {"name": "Whitefield", "lat": 12.9845, "lng": 77.75}];
-            const krideKanaka = [{"name": "Rajankunte", "lat": 13.17, "lng": 77.56}, {"name": "Muddana Halli", "lat": 13.135, "lng": 77.575}, {"name": "Yelahanka (interchange)", "lat": 13.1, "lng": 77.59}, {"name": "Jakkur", "lat": 13.0842, "lng": 77.6}, {"name": "Hegde Nagar", "lat": 13.0685, "lng": 77.6101}, {"name": "Thanisandra", "lat": 13.0527, "lng": 77.6201}, {"name": "Hennur", "lat": 13.0369, "lng": 77.6302}, {"name": "Horamavu", "lat": 13.0211, "lng": 77.6402}, {"name": "Channasandra", "lat": 13.0054, "lng": 77.6503}, {"name": "Benniganahalli (interchange)", "lat": 12.9896, "lng": 77.6603}, {"name": "Kagadaspura", "lat": 12.9772, "lng": 77.6734}, {"name": "Doddanekundi", "lat": 12.9647, "lng": 77.6865}, {"name": "Marathahalli", "lat": 12.9523, "lng": 77.6996}, {"name": "Belandur Road", "lat": 12.9313, "lng": 77.6975}, {"name": "Carmelaram", "lat": 12.9102, "lng": 77.6954}, {"name": "Ambedkar Nagar", "lat": 12.8892, "lng": 77.6933}, {"name": "Huskur", "lat": 12.8681, "lng": 77.6913}, {"name": "Singena Agrahara (future)", "lat": 12.8471, "lng": 77.6892}, {"name": "Bommasandra (future)", "lat": 12.826, "lng": 77.6871}, {"name": "Heelalige", "lat": 12.805, "lng": 77.685}];
-
-            // Draw Namma Metro Network
             drawTransitLine("Metro Purple Line", "Operational", "#8b5cf6", false, metroPurple, activeTransitLayer);
             drawTransitLine("Metro Green Line", "Operational", "#22c55e", false, metroGreen, activeTransitLayer);
-            drawTransitLine("Metro Yellow Line", "Testing", "#eab308", false, metroYellow, activeTransitLayer);
-            drawTransitLine("Metro Pink Line", "Future", "#ec4899", false, metroPink, activeTransitLayer);
-            drawTransitLine("Metro Blue Line", "Future", "#3b82f6", false, metroBlue, activeTransitLayer);
-            drawTransitLine("Metro Orange Line", "Future", "#f97316", false, metroOrange, activeTransitLayer);
-            drawTransitLine("Metro Grey Line", "Future", "#64748b", false, metroGrey, activeTransitLayer);
-
-            // Draw K-RIDE Suburban Rail Network
-            drawTransitLine("K-RIDE Sampige", "Suburban", "#dc2626", true, krideSampige, futureTransitLayer);
-            drawTransitLine("K-RIDE Mallige", "Suburban", "#db2777", true, krideMallige, futureTransitLayer);
             drawTransitLine("K-RIDE Parijaata", "Suburban", "#06b6d4", true, krideParijaata, futureTransitLayer);
-            drawTransitLine("K-RIDE Kanaka", "Suburban", "#d97706", true, krideKanaka, futureTransitLayer);
 
-            // --- FULL INDIAN RAILWAYS REGIONAL LINES ---
-            const regionalLines = {
-                "Doddaballapura - SMVT": {
-                    color: "#78350f",
-                    stations: [
-                        { "name": "Doddaballapura", "lat": 13.2924, "lng": 77.5431 },
-                        { "name": "Rajanukunte", "lat": 13.17, "lng": 77.56 },
-                        { "name": "Yelahanka", "lat": 13.1, "lng": 77.59 },
-                        { "name": "Channasandra", "lat": 13.0054, "lng": 77.6503 },
-                        { "name": "SMVT Bengaluru", "lat": 12.9935, "lng": 77.6496 }
-                    ]
-                },
-                "KSR Bengaluru - Chikkaballapura": {
-                    color: "#dc2626",
-                    stations: [
-                        { "name": "KSR Bengaluru", "lat": 12.978, "lng": 77.569 },
-                        { "name": "Malleswaram", "lat": 13.0113, "lng": 77.5503 },
-                        { "name": "Yeshwanthpur", "lat": 13.028, "lng": 77.5409 },
-                        { "name": "Lottegollahalli", "lat": 13.0568, "lng": 77.5605 },
-                        { "name": "Kodigehalli", "lat": 13.0712, "lng": 77.5704 },
-                        { "name": "Yelahanka", "lat": 13.1, "lng": 77.59 },
-                        { "name": "Bettahalasuru", "lat": 13.1414, "lng": 77.6249 },
-                        { "name": "Doddajala", "lat": 13.1621, "lng": 77.6423 },
-                        { "name": "Devanahalli", "lat": 13.245, "lng": 77.712 },
-                        { "name": "Avatihalli", "lat": 13.29, "lng": 77.718 },
-                        { "name": "Venkatagiri Kote", "lat": 13.34, "lng": 77.72 },
-                        { "name": "Nandi Halt", "lat": 13.385, "lng": 77.71 },
-                        { "name": "Chikkaballapura", "lat": 13.4325, "lng": 77.7275 }
-                    ]
-                },
-                "Chikkaballapura - Kuppam": {
-                    color: "#6b7280",
-                    stations: [
-                        { "name": "Chikkaballapura", "lat": 13.4325, "lng": 77.7275 },
-                        { "name": "Sidlaghatta", "lat": 13.3888, "lng": 77.8631 },
-                        { "name": "Chintamani", "lat": 13.4, "lng": 78.06 },
-                        { "name": "Srinivaspur", "lat": 13.335, "lng": 78.22 },
-                        { "name": "Kolar", "lat": 13.1367, "lng": 78.1292 },
-                        { "name": "Bangarapet", "lat": 12.99, "lng": 78.18 },
-                        { "name": "Kuppam", "lat": 12.75, "lng": 78.36 }
-                    ]
-                },
-                "Hosur - Tumkur": {
-                    color: "#f97316",
-                    stations: [
-                        { "name": "Hosur", "lat": 12.73, "lng": 77.82 },
-                        { "name": "Anekal Road", "lat": 12.75, "lng": 77.695 },
-                        { "name": "Heelalige", "lat": 12.805, "lng": 77.685 },
-                        { "name": "Carmelaram", "lat": 12.9102, "lng": 77.6954 },
-                        { "name": "Belandur Road", "lat": 12.9313, "lng": 77.6975 },
-                        { "name": "Baiyappanahalli", "lat": 12.9841, "lng": 77.653 },
-                        { "name": "Banaswadi", "lat": 13.0186, "lng": 77.6358 },
-                        { "name": "Hebbal", "lat": 13.0354, "lng": 77.5975 },
-                        { "name": "Yeshwanthpur", "lat": 13.028, "lng": 77.5409 },
-                        { "name": "Chikka Banavara", "lat": 13.065, "lng": 77.505 },
-                        { "name": "Golhalli", "lat": 13.1444, "lng": 77.4431 },
-                        { "name": "Dodbele", "lat": 13.2, "lng": 77.34 },
-                        { "name": "Nidvanda", "lat": 13.245, "lng": 77.27 },
-                        { "name": "Kyatsandra", "lat": 13.32, "lng": 77.135 },
-                        { "name": "Tumkur", "lat": 13.33, "lng": 77.1 }
-                    ]
-                },
-                "Ashokapuram - Bangarapet": {
-                    color: "#3b82f6",
-                    stations: [
-                        { "name": "Ashokapuram", "lat": 12.27, "lng": 76.64 },
-                        { "name": "Mysuru Jn", "lat": 12.316, "lng": 76.645 },
-                        { "name": "Naganahalli", "lat": 12.37, "lng": 76.66 },
-                        { "name": "Srirangapatna", "lat": 12.42, "lng": 76.68 },
-                        { "name": "Pandavapura", "lat": 12.48, "lng": 76.74 },
-                        { "name": "Mandya", "lat": 12.52, "lng": 76.89 },
-                        { "name": "Maddur", "lat": 12.58, "lng": 77.04 },
-                        { "name": "Channapatna", "lat": 12.64, "lng": 77.19 },
-                        { "name": "Ramanagara", "lat": 12.72, "lng": 77.28 },
-                        { "name": "Bidadi", "lat": 12.798, "lng": 77.387 },
-                        { "name": "Kengeri", "lat": 12.91, "lng": 77.48 },
-                        { "name": "Nayandahalli", "lat": 12.944, "lng": 77.5245 },
-                        { "name": "KSR Bengaluru", "lat": 12.978, "lng": 77.569 },
-                        { "name": "Bengaluru Cantt", "lat": 12.9939, "lng": 77.5976 },
-                        { "name": "Bengaluru East", "lat": 13.0, "lng": 77.62 },
-                        { "name": "Baiyappanahalli", "lat": 12.9841, "lng": 77.653 },
-                        { "name": "Krishnarajapura", "lat": 13.0016, "lng": 77.6738 },
-                        { "name": "Whitefield", "lat": 12.9845, "lng": 77.75 },
-                        { "name": "Devangonthi", "lat": 12.995, "lng": 77.81 },
-                        { "name": "Malur", "lat": 13.0, "lng": 77.94 },
-                        { "name": "Tyakal", "lat": 13.005, "lng": 78.05 },
-                        { "name": "Bangarapet", "lat": 12.99, "lng": 78.18 }
-                    ]
-                }
-            };
-
-            for (let route in regionalLines) {
-                drawTransitLine(route, "Regional Train", regionalLines[route].color, false, regionalLines[route].stations, irLayer);
-            }
-
-            // --- MAJOR BUS HUBS ---
             const busHubs = [ 
-                {name: "Majestic Bus Station", lat: 12.9766, lng: 77.5713}, {name: "Shivajinagar Bus Station", lat: 12.9857, lng: 77.6057}, 
+                {name: "Majestic Bus Station", lat: 12.9766, lng: 77.5713}, 
+                {name: "Shivajinagar Bus Station", lat: 12.9857, lng: 77.6057}, 
                 {name: "KR Puram Bus Station", lat: 13.0075, lng: 77.6959}
             ];
             const hubIcon = L.divIcon({ className: 'custom-icon', html: '<div style="background:#f59e0b; width:22px; height:22px; border-radius:50%; border:2px solid white; display:flex; align-items:center; justify-content:center; color:white; font-size:10px;"><i class="fa-solid fa-bus"></i></div>', iconSize: [22, 22], iconAnchor: [11, 11] });
             busHubs.forEach(s => { L.marker([s.lat, s.lng], {icon: hubIcon}).addTo(busHubLayer).bindPopup(`<b>${s.name}</b><br>Major Bus Hub`); });
 
-            // --- LIVE FLEET UNITS ENGINE (FLOATING) ---
-            let savedFleet = JSON.parse(localStorage.getItem('dashboard_fleet'));
-            if (!savedFleet) {
-                savedFleet = [];
-                for (let i = 0; i < 10; i++) savedFleet.push({ type: 'bmtc_u', lat: centerLat + (Math.random() - 0.5) * 0.2, lng: centerLng + (Math.random() - 0.5) * 0.2, vLat: (Math.random() - 0.5) * 0.0006, vLng: (Math.random() - 0.5) * 0.0006 });
-                for (let i = 0; i < 5; i++) savedFleet.push({ type: 'bmtc_s', lat: centerLat + (Math.random() - 0.5) * 0.6, lng: centerLng + (Math.random() - 0.5) * 0.6, vLat: (Math.random() - 0.5) * 0.0008, vLng: (Math.random() - 0.5) * 0.0008 });
-                for (let i = 0; i < 4; i++) savedFleet.push({ type: 'amb', lat: centerLat + (Math.random() - 0.5) * 0.3, lng: centerLng + (Math.random() - 0.5) * 0.3, vLat: (Math.random() - 0.5) * 0.001, vLng: (Math.random() - 0.5) * 0.001 });
-            }
+            let savedFleet = [];
+            for (let i = 0; i < 8; i++) savedFleet.push({ type: 'bmtc_u', lat: centerLat + (Math.random() - 0.5) * 0.15, lng: centerLng + (Math.random() - 0.5) * 0.15, vLat: (Math.random() - 0.5) * 0.0006, vLng: (Math.random() - 0.5) * 0.0006 });
 
             const activeFleetMarkers = [];
-            const icons = {
-                'bmtc_u': L.divIcon({ className: 'moving-marker bmtc-marker', html: '<div style="background:#22c55e; color:white; width:22px; height:22px; border-radius:5px; border:2px solid white; display:flex; align-items:center; justify-content:center; box-shadow: 0 2px 5px rgba(0,0,0,0.5); font-size:10px;"><i class="fa-solid fa-bus"></i></div>', iconSize: [22, 22], iconAnchor: [11, 11] }),
-                'bmtc_s': L.divIcon({ className: 'moving-marker bmtc-marker', html: '<div style="background:#22c55e; color:white; width:22px; height:22px; border-radius:5px; border:2px solid white; display:flex; align-items:center; justify-content:center; box-shadow: 0 2px 5px rgba(0,0,0,0.5); font-size:10px;"><i class="fa-solid fa-bus"></i></div>', iconSize: [22, 22], iconAnchor: [11, 11] }),
-                'amb': L.divIcon({ className: 'moving-marker amb-marker', html: '<div class="siren-pulse" style="color:white; width:24px; height:24px; border-radius:50%; border:2px solid white; display:flex; align-items:center; justify-content:center; font-size:11px;"><i class="fa-solid fa-truck-medical"></i></div>', iconSize: [24, 24], iconAnchor: [12, 12] })
-            };
+            const fleetIcon = L.divIcon({ className: 'moving-marker', html: '<div style="background:#22c55e; color:white; width:22px; height:22px; border-radius:5px; border:2px solid white; display:flex; align-items:center; justify-content:center; box-shadow: 0 2px 5px rgba(0,0,0,0.5); font-size:10px;"><i class="fa-solid fa-bus"></i></div>', iconSize: [22, 22], iconAnchor: [11, 11] });
 
             savedFleet.forEach(unit => {
-                let popup = unit.type === 'bmtc_u' ? '<b>BMTC Urban Route</b>' : (unit.type === 'bmtc_s' ? '<b>BMTC Suburban Route</b>' : '<b style="color:black;">Ambulance Unit</b><br><span style="color:red;">En Route</span>');
-                let marker = L.marker([unit.lat, unit.lng], {icon: icons[unit.type]}).addTo(map).bindPopup(popup);
+                let marker = L.marker([unit.lat, unit.lng], {icon: fleetIcon}).addTo(map).bindPopup('<b>BMTC Urban Unit</b>');
                 activeFleetMarkers.push({ data: unit, marker: marker });
             });
 
@@ -1080,8 +1002,8 @@
                 activeFleetMarkers.forEach(unit => {
                     unit.data.lat += unit.data.vLat; 
                     unit.data.lng += unit.data.vLng;
-                    if (Math.abs(unit.data.lat - centerLat) > 0.4) unit.data.vLat *= -1;
-                    if (Math.abs(unit.data.lng - centerLng) > 0.4) unit.data.vLng *= -1;
+                    if (Math.abs(unit.data.lat - centerLat) > 0.3) unit.data.vLat *= -1;
+                    if (Math.abs(unit.data.lng - centerLng) > 0.3) unit.data.vLng *= -1;
                     unit.marker.setLatLng([unit.data.lat, unit.data.lng]);
                 });
             }, 1000);

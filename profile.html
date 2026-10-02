@@ -14,11 +14,11 @@
     <nav class="navbar">
         <div style="display: flex; align-items: center;">
             <a href="index.html" class="brand">
-                 <img src="ChatGPT_Image_Jun_7__2026__02_57_26_PM-removebg-preview (1).png" alt="RTA Logo" class="nav-logo">
+                 <img src="ChatGPT_Image_Jun_7__2026__02_57_26_PM-removebg-preview (1).png" alt="RTA Logo" class="nav-logo" onerror="this.style.display='none'">
                 <div class="brand-text">BMRTA<span></span></div>
             </a>
             <div class="green-miles-badge" title="Carbon Points System">
-                <i class="fa-solid fa-leaf"></i> <span id="nav-co2">5200</span> Pts
+                <i class="fa-solid fa-leaf"></i> <span id="nav-co2">0</span> Pts
             </div>
         </div>
         <div class="nav-links">
@@ -30,7 +30,7 @@
             <a href="index.html">Live Dashboard</a>
             <a onclick="openSettings()">Settings</a>
             <button id="theme-toggle" class="btn-theme-toggle"><i class="fa-solid fa-moon"></i></button>
-            <a href="index.html" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            <a href="login.html" class="btn-logout" id="profile-nav-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
 
             <!-- Mobile Hamburger Menu Button -->
             <button id="mobile-menu-toggle" class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle navigation">
@@ -82,14 +82,14 @@
                 <div class="menu-stat-card c-green">
                     <i class="fa-solid fa-cloud-arrow-down"></i>
                     <div>
-                        <div class="menu-stat-val" id="menu-co2">52.0 kg</div>
+                        <div class="menu-stat-val" id="menu-co2">0.0 kg</div>
                         <div class="menu-stat-lbl">CO₂ Emissions Saved</div>
                     </div>
                 </div>
                 <div class="menu-stat-card c-orange">
                     <i class="fa-solid fa-piggy-bank"></i>
                     <div>
-                        <div class="menu-stat-val" id="menu-money">₹3,450</div>
+                        <div class="menu-stat-val" id="menu-money">₹0</div>
                         <div class="menu-stat-lbl">Saved vs Driving</div>
                     </div>
                 </div>
@@ -117,11 +117,11 @@
                 
                 <div class="user-content-wrapper">
                     <div class="avatar-ring" id="avatar-ring">
-                        <div class="avatar-inner" id="main-avatar-inner">VV</div>
+                        <div class="avatar-inner" id="main-avatar-inner">--</div>
                     </div>
                     
-                    <div class="user-name">Vignesh Vicky</div>
-                    <div class="user-username">@vignesh_v</div>
+                    <div class="user-name" id="profile-user-name">Loading...</div>
+                    <div class="user-username" id="profile-user-handle">@user</div>
                     
                     <div class="status-indicator" onclick="toggleMoonMode()" title="Click to toggle Moon Mode">
                         <div id="user-status-dot" class="status-dot"></div>
@@ -181,7 +181,7 @@
                 <div class="top-stat-card c-green">
                     <div style="font-size: 22px; font-weight: 800; display:flex; flex-direction:column; align-items:center; gap: 2px;">
                         <i class="fa-solid fa-cloud-arrow-down stat-icon"></i> 
-                        <span id="profile-co2">52.0 kg</span>
+                        <span id="profile-co2">0.0 kg</span>
                     </div>
                     <div class="top-stat-label">CO₂ Emissions Saved</div>
                 </div>
@@ -189,7 +189,7 @@
                 <div class="top-stat-card c-orange">
                     <div style="font-size: 22px; font-weight: 800; display:flex; flex-direction:column; align-items:center; gap: 2px;">
                         <i class="fa-solid fa-piggy-bank stat-icon"></i>
-                        <span id="profile-money-saved">₹3,450</span>
+                        <span id="profile-money-saved">₹0</span>
                     </div>
                     <div class="top-stat-label">Saved vs Driving</div>
                 </div>
@@ -210,7 +210,7 @@
                     <div class="calendar-container">
                         <div class="calendar-header">
                             <button class="calendar-nav" onclick="changeMonth(-1)"><i class="fa-solid fa-chevron-left"></i></button>
-                            <span id="calendar-month-year" style="font-weight: 600; font-family: 'Montserrat';">June 2026</span>
+                            <span id="calendar-month-year" style="font-weight: 600; font-family: 'Montserrat';">October 2026</span>
                             <button class="calendar-nav" onclick="changeMonth(1)"><i class="fa-solid fa-chevron-right"></i></button>
                         </div>
                         <div class="calendar-grid" id="calendar-grid"></div>
@@ -223,14 +223,14 @@
                 <div id="section-personal" class="glass-panel dynamic-section">
                     <h3>Personal Information</h3>
                     <div class="info-grid">
-                        <div class="info-item"><label>First Name</label><div>Vignesh</div></div>
-                        <div class="info-item"><label>Last Name</label><div>Vicky</div></div>
-                        <div class="info-item"><label>Mobile No</label><div>+91 98765 43210</div></div>
-                        <div class="info-item"><label>Email</label><div>vignesh.v@gmail.com</div></div>
-                        <div class="info-item"><label>Date of Birth</label><div>14 Aug 1995</div></div>
-                        <div class="info-item"><label>Account Created</label><div>12 Jan 2025</div></div>
+                        <div class="info-item"><label>Full Name</label><div id="info-name">--</div></div>
+                        <div class="info-item"><label>Username</label><div id="info-username">--</div></div>
+                        <div class="info-item"><label>Mobile No</label><div id="info-mobile">+91 98765 43210</div></div>
+                        <div class="info-item"><label>Email Address</label><div id="info-email">--</div></div>
+                        <div class="info-item"><label>Membership Level</label><div id="info-level">Level 1</div></div>
+                        <div class="info-item"><label>Account Status</label><div style="color: #22c55e; font-weight: 700;">Verified Commuter</div></div>
                         <div class="info-item"><label>Linked Card</label><div>**** **** **** 4592</div></div>
-                        <div class="info-item"><label>UPI Details</label><div>vignesh@okhdfcbank</div></div>
+                        <div class="info-item"><label>Registered Zone</label><div>Bengaluru Metropolitan Region</div></div>
                     </div>
                     <button class="btn-logout" style="margin: 15px 0 0 0; width: fit-content; border: 1px solid #64748b; color: inherit !important; background: transparent;"><i class="fa-solid fa-shield-halved"></i> Privacy Policy</button>
                 </div>
@@ -239,9 +239,9 @@
                     <h3>Smart Wallet & Passes</h3>
                     <div class="wallet-card">
                         <div style="font-size: 13px; opacity: 0.8; text-transform: uppercase;">Available Balance</div>
-                        <div class="wallet-amount" id="display-wallet-balance">₹ 245.50</div>
+                        <div class="wallet-amount" id="display-wallet-balance">₹ 0.00</div>
                         <div style="display: flex; gap: 10px; margin-top: 15px;">
-                            <div style="background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 6px; font-size: 12px;"><i class="fa-solid fa-check-circle" style="color:#4ade80;"></i> Active Daily Pass</div>
+                            <div id="wallet-active-pass-badge" style="display: none; background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 6px; font-size: 12px;"><i class="fa-solid fa-check-circle" style="color:#4ade80;"></i> Active Transit Pass</div>
                         </div>
                     </div>
 
@@ -253,7 +253,7 @@
                         </div>
                         <div style="font-family:monospace; font-size:16px; margin:12px 0; letter-spacing: 2px;">**** **** 4592</div>
                         <div style="font-size:11px; display:flex; justify-content:space-between; align-items:center;">
-                            <span style="font-weight:600;">VIGNESH VICKY</span>
+                            <span style="font-weight:600;" id="ncmc-user-name">COMMUTER</span>
                             <span style="color:#86efac; background:rgba(255,255,255,0.1); padding:3px 8px; border-radius:12px;"><i class="fa-solid fa-circle-check"></i> Active</span>
                         </div>
                     </div>
@@ -272,7 +272,7 @@
 
                     <div class="level-card" style="margin-bottom: 10px;">
                         <div style="font-size: 18px; font-family: 'Montserrat'; font-weight: 800;">Current: LEVEL <span id="reward-level">1</span></div>
-                        <div class="text-sm" style="margin-top: 5px;" id="reward-status">Travel 1 more time to reach Level 2!</div>
+                        <div class="text-sm" style="margin-top: 5px;" id="reward-status">Loading travel progress...</div>
                         
                         <button class="sim-travel-btn" onclick="simulateTravel()"><i class="fa-solid fa-ticket"></i> Buy Ticket & Travel</button>
                         
@@ -350,7 +350,7 @@
                     <div class="friends-tab-container">
                         <button class="friend-tab-btn active" onclick="toggleFriendView('list', this)">My Friends</button>
                         <button class="friend-tab-btn" onclick="toggleFriendView('add', this)">Add Friends</button>
-                        <button class="friend-tab-btn" onclick="toggleFriendView('requests', this)">Requests <span style="background:#ef4444; color:white; border-radius:50%; padding: 2px 6px; font-size:10px; margin-left:4px;" id="req-count">2</span></button>
+                        <button class="friend-tab-btn" onclick="toggleFriendView('requests', this)">Requests <span style="background:#ef4444; color:white; border-radius:50%; padding: 2px 6px; font-size:10px; margin-left:4px;" id="req-count">0</span></button>
                     </div>
 
                     <div id="friend-list-view"></div>
@@ -693,7 +693,7 @@
                         <i class="fa-solid fa-tree" style="font-size: 32px; color: #22c55e;"></i>
                         <div>
                             <div style="font-size: 13px; font-family:'Inter'; font-weight: 500; line-height: 1.4;" id="impact-trees-text">
-                                Your transit choices 5200 PTS = 52.0 KG the cooling effect of 5.2 trees. (Minimum)
+                                Your transit choices 0 PTS = 0.0 KG the cooling effect of 0.0 trees. (Minimum)
                             </div>
                         </div>
                     </div>
@@ -712,7 +712,7 @@
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <i class="fa-solid fa-arrow-trend-up" style="font-size: 32px; color: #f59e0b;"></i>
                         <div>
-                            <div style="font-size: 20px; font-weight: 800; font-family:'Montserrat'; text-shadow: 0 0 10px rgba(245,158,11,0.2);">₹3,450</div>
+                            <div style="font-size: 20px; font-weight: 800; font-family:'Montserrat'; text-shadow: 0 0 10px rgba(245,158,11,0.2);" id="thrifty-savings-display">₹0</div>
                             <div class="text-sm">Saved vs. Cab Fares.</div>
                         </div>
                     </div>
@@ -767,10 +767,10 @@
                     <div class="settings-panel active" id="set-basic">
                         <h3 style="border:none; margin:0;"><i class="fa-solid fa-sliders" style="color:#3b82f6;"></i> Basic Information</h3>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                            <div class="form-group"><label>Gender</label><select><option>Male</option><option>Female</option><option>Non-Binary</option><option>Prefer not to say</option></select></div>
-                            <div class="form-group"><label>Language</label><select><option>English</option><option>Kannada</option><option>Hindi</option></select></div>
+                            <div class="form-group"><label>Gender</label><select id="setting-gender"><option>Male</option><option>Female</option><option>Non-Binary</option><option>Prefer not to say</option></select></div>
+                            <div class="form-group"><label>Language</label><select id="setting-language"><option>English</option><option>Kannada</option><option>Hindi</option></select></div>
                         </div>
-                        <div class="form-group"><label>Your Activity</label><select><option>Daily Commuter</option><option>Weekend Traveler</option><option>Occasional Rider</option></select></div>
+                        <div class="form-group"><label>Your Activity</label><select id="setting-activity"><option>Daily Commuter</option><option>Weekend Traveler</option><option>Occasional Rider</option></select></div>
                         <div class="form-group"><label>About (Bio)</label><textarea id="setting-bio-input">"Eco-warrior & daily commuter. Let's save the planet one trip at a time!"</textarea></div>
                         
                         <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
@@ -784,7 +784,7 @@
 
                     <div class="settings-panel" id="set-glory">
                         <h3 style="border:none; margin:0;"><i class="fa-solid fa-medal" style="color:#f59e0b;"></i> Select Glory Title</h3>
-                        <div class="text-sm" style="margin-top:-10px; margin-bottom: 10px;">Glory Titles unlock as you level up! (This a Prototype Software so all the glory titles are accessible)</div>
+                        <div class="text-sm" style="margin-top:-10px; margin-bottom: 10px;">Glory Titles unlock as you level up!</div>
                         <div class="glory-filter-bar">
                             <button class="glory-filter-btn active" onclick="renderGloryTags('all', this)">All</button>
                             <button class="glory-filter-btn" onclick="renderGloryTags('owned', this)">Owned</button>
@@ -828,16 +828,16 @@
 
                         <h4 style="font-size: 13px; color: #94a3b8; margin-top: 5px;">Initials & Transit Backgrounds</h4>
                         <div class="avatar-grid">
-                            <div class="avatar-option selected" style="background: linear-gradient(135deg, #007bff, #06b6d4);" onclick="selectImage(this, '<span class=\'avatar-text\'>VV</span>', 'linear-gradient(135deg, #007bff, #06b6d4)', '')"><span class="avatar-text">VV</span></div>
-                            <div class="avatar-option" style="background: #dc2626;" onclick="selectImage(this, '<i class=\'fa-solid fa-bus avatar-bg-icon\'></i> <span class=\'avatar-text\'>VV</span>', '#dc2626', '')"><i class="fa-solid fa-bus avatar-bg-icon"></i> <span class="avatar-text">VV</span></div>
-                            <div class="avatar-option" style="background: #ea580c;" onclick="selectImage(this, '<i class=\'fa-solid fa-bus avatar-bg-icon\'></i> <span class=\'avatar-text\'>VV</span>', '#ea580c', '')"><i class="fa-solid fa-bus avatar-bg-icon"></i> <span class="avatar-text">VV</span></div>
-                            <div class="avatar-option" style="background: #16a34a;" onclick="selectImage(this, '<i class=\'fa-solid fa-bus avatar-bg-icon\'></i> <span class=\'avatar-text\'>VV</span>', '#16a34a', '')"><i class="fa-solid fa-bus avatar-bg-icon"></i> <span class="avatar-text">VV</span></div>
-                            <div class="avatar-option" style="background: #2563eb;" onclick="selectImage(this, '<i class=\'fa-solid fa-train avatar-bg-icon\'></i> <span class=\'avatar-text\'>VV</span>', '#2563eb', '')"><i class="fa-solid fa-train avatar-bg-icon"></i> <span class="avatar-text">VV</span></div>
-                            <div class="avatar-option" style="background: #7c3aed;" onclick="selectImage(this, '<i class=\'fa-solid fa-train avatar-bg-icon\'></i> <span class=\'avatar-text\'>VV</span>', '#7c3aed', '')"><i class="fa-solid fa-train avatar-bg-icon"></i> <span class="avatar-text">VV</span></div>
-                            <div class="avatar-option" style="background: #db2777;" onclick="selectImage(this, '<i class=\'fa-solid fa-train avatar-bg-icon\'></i> <span class=\'avatar-text\'>VV</span>', '#db2777', '')"><i class="fa-solid fa-train avatar-bg-icon"></i> <span class="avatar-text">VV</span></div>
-                            <div class="avatar-option" style="background: #475569;" onclick="selectImage(this, '<i class=\'fa-solid fa-train-subway avatar-bg-icon\'></i> <span class=\'avatar-text\'>VV</span>', '#475569', '')"><i class="fa-solid fa-train-subway avatar-bg-icon"></i> <span class="avatar-text">VV</span></div>
-                            <div class="avatar-option" style="background: #0f766e;" onclick="selectImage(this, '<i class=\'fa-solid fa-train-subway avatar-bg-icon\'></i> <span class=\'avatar-text\'>VV</span>', '#0f766e', '')"><i class="fa-solid fa-train-subway avatar-bg-icon"></i> <span class="avatar-text">VV</span></div>
-                            <div class="avatar-option" style="background: #b45309;" onclick="selectImage(this, '<i class=\'fa-solid fa-train-subway avatar-bg-icon\'></i> <span class=\'avatar-text\'>VV</span>', '#b45309', '')"><i class="fa-solid fa-train-subway avatar-bg-icon"></i> <span class="avatar-text">VV</span></div>
+                            <div class="avatar-option selected" style="background: linear-gradient(135deg, #007bff, #06b6d4);" onclick="selectImage(this, '<span class=\'avatar-text\'>AV</span>', 'linear-gradient(135deg, #007bff, #06b6d4)', '')"><span class="avatar-text">AV</span></div>
+                            <div class="avatar-option" style="background: #dc2626;" onclick="selectImage(this, '<i class=\'fa-solid fa-bus avatar-bg-icon\'></i> <span class=\'avatar-text\'>AV</span>', '#dc2626', '')"><i class="fa-solid fa-bus avatar-bg-icon"></i> <span class="avatar-text">AV</span></div>
+                            <div class="avatar-option" style="background: #ea580c;" onclick="selectImage(this, '<i class=\'fa-solid fa-bus avatar-bg-icon\'></i> <span class=\'avatar-text\'>AV</span>', '#ea580c', '')"><i class="fa-solid fa-bus avatar-bg-icon"></i> <span class="avatar-text">AV</span></div>
+                            <div class="avatar-option" style="background: #16a34a;" onclick="selectImage(this, '<i class=\'fa-solid fa-bus avatar-bg-icon\'></i> <span class=\'avatar-text\'>AV</span>', '#16a34a', '')"><i class="fa-solid fa-bus avatar-bg-icon"></i> <span class="avatar-text">AV</span></div>
+                            <div class="avatar-option" style="background: #2563eb;" onclick="selectImage(this, '<i class=\'fa-solid fa-train avatar-bg-icon\'></i> <span class=\'avatar-text\'>AV</span>', '#2563eb', '')"><i class="fa-solid fa-train avatar-bg-icon"></i> <span class="avatar-text">AV</span></div>
+                            <div class="avatar-option" style="background: #7c3aed;" onclick="selectImage(this, '<i class=\'fa-solid fa-train avatar-bg-icon\'></i> <span class=\'avatar-text\'>AV</span>', '#7c3aed', '')"><i class="fa-solid fa-train avatar-bg-icon"></i> <span class="avatar-text">AV</span></div>
+                            <div class="avatar-option" style="background: #db2777;" onclick="selectImage(this, '<i class=\'fa-solid fa-train avatar-bg-icon\'></i> <span class=\'avatar-text\'>AV</span>', '#db2777', '')"><i class="fa-solid fa-train avatar-bg-icon"></i> <span class="avatar-text">AV</span></div>
+                            <div class="avatar-option" style="background: #475569;" onclick="selectImage(this, '<i class=\'fa-solid fa-train-subway avatar-bg-icon\'></i> <span class=\'avatar-text\'>AV</span>', '#475569', '')"><i class="fa-solid fa-train-subway avatar-bg-icon"></i> <span class="avatar-text">AV</span></div>
+                            <div class="avatar-option" style="background: #0f766e;" onclick="selectImage(this, '<i class=\'fa-solid fa-train-subway avatar-bg-icon\'></i> <span class=\'avatar-text\'>AV</span>', '#0f766e', '')"><i class="fa-solid fa-train-subway avatar-bg-icon"></i> <span class="avatar-text">AV</span></div>
+                            <div class="avatar-option" style="background: #b45309;" onclick="selectImage(this, '<i class=\'fa-solid fa-train-subway avatar-bg-icon\'></i> <span class=\'avatar-text\'>AV</span>', '#b45309', '')"><i class="fa-solid fa-train-subway avatar-bg-icon"></i> <span class="avatar-text">AV</span></div>
                         </div>
                     </div>
 
